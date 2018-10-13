@@ -1,0 +1,17 @@
+﻿CREATE TABLE [dbo].[Users]
+(
+	[ID] INT,
+	[CURP] VARCHAR(18) NOT NULL,
+	[Email] VARCHAR(30) NOT NULL,
+	[Balance] INT NOT NULL,
+	[Phone] INT NOT NULL,
+	[Signature] IMAGE NOT NULL,
+	[Password] VARCHAR(30) NOT NULL,
+	[Role] VARCHAR NOT NULL,
+	[Birthdate] DATE NOT NULL,
+	[Gender] VARCHAR NOT NULL,
+	[Address] INT NOT NULL,
+	PRIMARY KEY (ID),
+	FOREIGN KEY ([Address]) REFERENCES Addresses(ID),
+	UNIQUE (CURP)
+)
