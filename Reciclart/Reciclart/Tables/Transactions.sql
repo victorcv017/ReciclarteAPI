@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Transactions]
 (
-	[ID] INT,
+	[ID] INT IDENTITY,
 	[Amount] INT NOT NULL,
 	[Date] DATE NOT NULL,
 	[User] INT NOT NULL,

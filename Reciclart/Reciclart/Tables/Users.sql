@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Users]
 (
-	[ID] INT,
+	[ID] INT IDENTITY,
 	[CURP] VARCHAR(18) NOT NULL,
 	[Email] VARCHAR(30) NOT NULL,
 	[Balance] INT NOT NULL,

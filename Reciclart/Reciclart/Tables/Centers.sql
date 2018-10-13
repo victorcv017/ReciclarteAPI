@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Centers]
 (
-	[ID] INT,
+	[ID] INT IDENTITY,
   [Schedule] VARCHAR(10) NOT NULL,
   [Location] VARCHAR(30) NOT NULL,
   [Name] VARCHAR(30) NOT NULL,

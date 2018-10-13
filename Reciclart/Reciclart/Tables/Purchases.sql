@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Purchases]
 (
-	[ID] INT NOT NULL,
+	[ID] INT NOT NULL IDENTITY,
 	[Quantity] INT NOT NULL,
 	[Transaction] INT NOT NULL,
 	[Item] INT NOT NULL,

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Items]
 (
-	[ID] INT NOT NULL,
+	[ID] INT NOT NULL IDENTITY,
   [Name] VARCHAR(30) NOT NULL,
   [Value] INT NOT NULL,
   [Enterprise] INT NOT NULL,

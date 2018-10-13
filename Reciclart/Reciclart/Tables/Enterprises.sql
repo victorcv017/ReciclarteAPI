@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Enterprises]
 (
-	[ID] INT PRIMARY KEY,
+	[ID] INT PRIMARY KEY IDENTITY,
 	[RFC] Varchar(12) NOT NULL,
 	[Name] Varchar(20) NOT NULL,
 	[Password] Varchar(20) NOT NULL,
