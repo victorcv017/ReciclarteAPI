@@ -4,5 +4,7 @@
   [Schedule] VARCHAR(10) NOT NULL,
   [Location] VARCHAR(30) NOT NULL,
   [Name] VARCHAR(30) NOT NULL,
-  PRIMARY KEY (ID)
+  [Address] int NOT NULL,
+  PRIMARY KEY (ID),
+  FOREIGN KEY ([Address]) REFERENCES Addresses(ID)
 )
