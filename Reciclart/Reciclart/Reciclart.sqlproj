@@ -79,4 +79,8 @@
     <Build Include="Tables\Purchases.sql" />
     <Build Include="Tables\Sales.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Reciclart.publish.xml" />
+    <None Include="Reciclart_1.publish.xml" />
+  </ItemGroup>
 </Project>
