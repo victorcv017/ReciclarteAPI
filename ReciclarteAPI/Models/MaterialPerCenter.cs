@@ -8,11 +8,11 @@ namespace ReciclarteAPI.Models
 {
     public class MaterialPerCenter
     {
-        [ForeignKey("Materials")]
-        public long Material { get; set; }
-        public Materials Materials { get; set; }
-        [ForeignKey("Centers")]
-        public long Center { get; set; }
-        public Centers Centers { get; set; }
+        [ForeignKey("Material")]
+        public long MaterialId { get; set; }
+        public Materials Material { get; set; }
+        [ForeignKey("Center")]
+        public long CenterId { get; set; }
+        public Centers Center { get; set; }
     }
 }

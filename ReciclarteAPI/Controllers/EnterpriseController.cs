@@ -20,21 +20,21 @@ namespace ReciclarteAPI.Controllers
 
             if (_context.Enterprises.Count() == 0)
             {
-                _context.Enterprises.Add(new Enterprise { Name = "Enterprise1" });
+                _context.Enterprises.Add(new Enterprises { Name = "Enterprise1" });
                 _context.SaveChanges();
             }
         }
 
         // GET: api/Enterprise
         [HttpGet]
-        public ActionResult<List<Enterprise>> GetAll()
+        public ActionResult<List<Enterprises>> GetAll()
         {
             return _context.Enterprises.ToList();
         }
 
         // GET: api/Enterprise/5
         [HttpGet("{id}", Name = "GetEnterprise")]
-        public ActionResult<Enterprise> GetById(long id)
+        public ActionResult<Enterprises> GetById(long id)
         {
             var item = _context.Enterprises.Find(id);
             if (item == null)
@@ -46,7 +46,7 @@ namespace ReciclarteAPI.Controllers
 
         // POST: api/Enterprise
         [HttpPost]
-        public IActionResult Create(Enterprise item)
+        public IActionResult Create(Enterprises item)
         {
             _context.Enterprises.Add(item);
             _context.SaveChanges();
@@ -56,7 +56,7 @@ namespace ReciclarteAPI.Controllers
 
         // PUT: api/Enterprise/5
         [HttpPut("{id}")]
-        public IActionResult Update(long id, Enterprise item)
+        public IActionResult Update(long id, Enterprises item)
         {
             var enterprise = _context.Enterprises.Find(id);
             if (enterprise == null)

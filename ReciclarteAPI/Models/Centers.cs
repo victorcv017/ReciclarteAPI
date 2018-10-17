@@ -10,9 +10,9 @@ namespace ReciclarteAPI.Models
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string schedule { get; set; }
-        [ForeignKey("Adresses")]
-        public long Adress { get; set; }
-        public Adresses Addresses { get; set; }
+        public string Schedule { get; set; }
+        [ForeignKey("Address")]
+        public long AddressId { get; set; }
+        public Addresses Address { get; set; }
     }
 }

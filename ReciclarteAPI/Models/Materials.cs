@@ -9,7 +9,7 @@ namespace ReciclarteAPI.Models
     public class Materials
     {
         public long Id { set; get; }
-        public string material { set; get; }
-        public long price { set; get; }
+        public string Material { set; get; }
+        public long Price { set; get; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ReciclarteAPI.Models
 {
-    public class Adresses
+    public class Addresses
     {
         public long Id { get; set; }
         public string City { get; set; }

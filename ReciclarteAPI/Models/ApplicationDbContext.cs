@@ -15,6 +15,25 @@ namespace ReciclarteAPI.Models
 
         }
 
-        public DbSet<Enterprise> Enterprises { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Users>()
+                .HasIndex(u => u.Curp)
+                .IsUnique();
+
+            modelBuilder.Entity<Enterprises>()
+                .HasIndex(e => e.RFC)
+                .IsUnique();
+
+            modelBuilder.Entity<Enterprises>()
+                .HasIndex(e => e.Email)
+                .IsUnique();
+
+
+
+
+        }
+
+        public DbSet<Enterprises> Enterprises { get; set; }
     }
 }

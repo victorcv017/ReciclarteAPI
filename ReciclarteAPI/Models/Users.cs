@@ -7,10 +7,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReciclarteAPI.Models
 {
-    public class User
+    public class Users
     {
         public long Id { get; set; }
-        public string Curp { get; set; } //Agregar Unique
+        public string Curp { get; set; } 
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Password { get; set; }
@@ -20,9 +20,9 @@ namespace ReciclarteAPI.Models
         public string Gender { get; set; }
         public string Role { get; set; }
         public string Signature { get; set; } 
-        [ForeignKey("Adresses")]
-        public long Adress { get; set; }
-        public Adresses Addresses { get; set; }
+        [ForeignKey("Address")]
+        public long AddressId { get; set; }
+        public Addresses Address { get; set; }
 
         /*ForeignKey("Pais")]
         public int PaisId { get; set; }

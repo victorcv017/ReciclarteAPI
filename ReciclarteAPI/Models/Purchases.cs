@@ -10,8 +10,11 @@ namespace ReciclarteAPI.Models
     {
         public long Id { set; get; }
         public long Quantity { set; get; }
-        [ForeignKey("Transactions")]
-        public long Transaction { get; set; }
-        public Transactions Transactions { get; set; }
+        [ForeignKey("Transaction")]
+        public long TransactionId { get; set; }
+        public Transactions Transaction { get; set; }
+        [ForeignKey("Item")]
+        public long ItemId { get; set; }
+        public Items Item { get; set; }
     }
 }
