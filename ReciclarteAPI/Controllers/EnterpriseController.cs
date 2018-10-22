@@ -32,6 +32,8 @@ namespace ReciclarteAPI.Controllers
             return _context.Enterprises.ToList();
         }
 
+
+
         // GET: api/Enterprise/5
         [HttpGet("{id}", Name = "GetEnterprise")]
         public ActionResult<Enterprises> GetById(long id)

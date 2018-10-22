@@ -35,5 +35,9 @@ namespace ReciclarteAPI.Models
         }
 
         public DbSet<Enterprises> Enterprises { get; set; }
+        public DbSet<Centers> Centers { get; set; }
+        public DbSet<Addresses> Addresses { get; set; }
+        public DbSet<MaterialPerCenter> MaterialPerCenters { get; set; }
+        public DbSet<Materials> Materials { get; set; }
     }
 }
