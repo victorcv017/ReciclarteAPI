@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReciclarteAPI.Models
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -29,15 +30,22 @@ namespace ReciclarteAPI.Models
                 .HasIndex(e => e.Email)
                 .IsUnique();
 
+            base.OnModelCreating(modelBuilder);
 
 
 
         }
 
-        public DbSet<Enterprises> Enterprises { get; set; }
-        public DbSet<Centers> Centers { get; set; }
         public DbSet<Addresses> Addresses { get; set; }
-        public DbSet<MaterialPerCenter> MaterialPerCenters { get; set; }
+        public DbSet<Centers> Centers { get; set; }
+        public DbSet<Enterprises> Enterprises { get; set; }
+        public DbSet<Items> Items { get; set; }
         public DbSet<Materials> Materials { get; set; }
+        public DbSet<MaterialsPerCenter> MaterialsPerCenter { get; set; }
+        public DbSet<Offices> Offices { get; set; }
+        public DbSet<Purchases> Purchases { get; set; }
+        public DbSet<Sales> Sales { get; set; }
+        public DbSet<Transactions> Transactions { get; set; }
+        public new DbSet<Users> Users { get; set; }
     }
 }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ReciclarteAPI.Models
 {
-    public class MaterialPerCenter
+    public class MaterialsPerCenter
     {
+        public long Id { get; set; }
         [ForeignKey("Material")]
         public long MaterialId { get; set; }
         public Materials Material { get; set; }

@@ -14,7 +14,7 @@ namespace ReciclarteAPI.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
         [ForeignKey("User")]
-        public long UserId { get; set; }
+        public string UserId { get; set; }
         public Users User { get; set; }
     }
 }

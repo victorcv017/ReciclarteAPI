@@ -35,7 +35,7 @@ namespace ReciclarteAPI
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
             // for users 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<Microsoft.AspNetCore.Identity.IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             //auth jwt service
