@@ -14,10 +14,10 @@ namespace ReciclarteAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         
-
+        [HttpGet]
         // GET: api/Center/Basic
         [HttpGet("{id}", Name = "GetBasicInfoCenter")]
-        public ActionResult<List<string>> GetBasicInfo(long id)
+        public ActionResult GetBasicInfo(long id)
         {
 
             var request = new List<string>();
@@ -35,16 +35,26 @@ namespace ReciclarteAPI.Controllers
 
             var location = _context.Addresses.Find(center.AddressId);
 
-            request.Add(_context.Addresses.Find(center.AddressId).City);
-            request.Add(_context.Addresses.Find(center.AddressId).Township);
-            request.Add(_context.Addresses.Find(center.AddressId).Street);
-            request.Add(_context.Addresses.Find(center.AddressId).Number.ToString());
-            request.Add(_context.Addresses.Find(center.AddressId).PC.ToString());
+            request.Add(location.City);
+            
+            request.Add(location.Township);
+            request.Add(location.Street);
+            request.Add(location.Number.ToString());
+            request.Add(location.PC.ToString());
 
             
 
 
-            return request;
+            return Json(new 
+            {
+                Schedule=request[0], 
+                Materials=request[1],
+                City=request[2],
+                Township=request[3],
+                Street=request[4],
+                Number=request[5],
+                PC=request[6]
+            }, JsonRequestBehavior.AllowGet);
             
         }
 
