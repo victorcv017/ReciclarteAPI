@@ -54,6 +54,12 @@ namespace ReciclarteAPI
                      Encoding.UTF8.GetBytes(Configuration["Llave"])),
                      ClockSkew = TimeSpan.Zero
                  });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("PolicyUser", pol => pol.RequireClaim("Type", "User"));
+                options.AddPolicy("PolicyEnterprise", pol => pol.RequireClaim("Type", "Enterprise"));
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

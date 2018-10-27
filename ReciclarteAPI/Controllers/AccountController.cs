@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,21 +34,21 @@ namespace ReciclarteAPI.Controllers
             this._configuration = configuration;
         }
 
-        [Route("Create")]
+        [Route("CreateUser")]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserInfo model)
         {
             if (ModelState.IsValid)
             {
-                var user = new Users { UserName = model.Email, Email = model.Email };
+                var user = new Users { UserName = model.Email, Email = model.Email , Curp = model.Curp , Address = model.Address};
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return BuildToken(model);
+                    return BuildTokenUser(model);
                 }
                 else
                 {
-                    return BadRequest("Username or password invalid");
+                    return BadRequest("Usuario o Contraseña Invalidos");
                 }
             }
             else
@@ -56,20 +58,45 @@ namespace ReciclarteAPI.Controllers
 
         }
 
+        [Route("CreateEnterprise")]
         [HttpPost]
-        [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] UserInfo userInfo)
+        public async Task<IActionResult> CreateEnterprise([FromBody] EnterpriseInfo model)
+        {
+            if (ModelState.IsValid)
+            {
+                var enterprise = new Enterprises { Name = model.Name, RFC = model.RFC, UserName = model.Email, Email = model.Email };
+                var result = await _userManager.CreateAsync(enterprise, model.Password);
+                if (result.Succeeded)
+                {
+                    return BuildTokenEnterprise(model);
+                }
+                else
+                {
+                    return BadRequest("Usuario o Contraseña Invalidos");
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+
+        }
+
+
+        [HttpPost]
+        [Route("User/Login")]
+        public async Task<IActionResult> UserLogin([FromBody] UserInfo userInfo)
         {
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return BuildToken(userInfo);
+                    return BuildTokenUser(userInfo);
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Intento inválido.");
                     return BadRequest(ModelState);
                 }
             }
@@ -79,12 +106,34 @@ namespace ReciclarteAPI.Controllers
             }
         }
 
-        private IActionResult BuildToken(UserInfo userInfo)
+        [Route("Enterprise/Login")]
+        public async Task<IActionResult> EnterpriseLogin([FromBody] EnterpriseInfo enterpriseInfo)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(enterpriseInfo.Email, enterpriseInfo.Password, isPersistent: false, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return BuildTokenEnterprise(enterpriseInfo);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Intento Inválido.");
+                    return BadRequest(ModelState);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        private IActionResult BuildTokenUser(UserInfo userInfo)
         {
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
-                new Claim("miValor", "Lo que yo quiera"),
+                new Claim("Type", "User"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -107,5 +156,49 @@ namespace ReciclarteAPI.Controllers
             });
 
         }
+
+        private IActionResult BuildTokenEnterprise(EnterpriseInfo enterpriseInfo)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.UniqueName, enterpriseInfo.Email),
+                new Claim("Type", "Enterprise"),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var expiration = DateTime.UtcNow.AddHours(1);
+
+            JwtSecurityToken token = new JwtSecurityToken(
+               issuer: "yourdomain.com",
+               audience: "yourdomain.com",
+               claims: claims,
+               expires: expiration,
+               signingCredentials: creds);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = expiration
+            });
+
+        }
+
+        [Route("user/profile")]
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyUser")]
+        public async Task<IActionResult> UserProfile()
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user is null)
+            {
+                return Ok(User.Identity.Name + " gola " );
+            }
+            return Ok(user);
+        }
+
     }
 }

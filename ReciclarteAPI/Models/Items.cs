@@ -13,7 +13,7 @@ namespace ReciclarteAPI.Models
         public string Name { set; get; }
         public long Value { set; get; }
         [ForeignKey("Enterprise")]
-        public int EnterpriseId { get; set; }
+        public string EnterpriseId { get; set; }
         public Enterprises Enterprise { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace ReciclarteAPI.Models
         public long Id { set; get; }
         public string Material { set; get; }
         public long Price { set; get; }
+        public List<MaterialsPerCenter> MaterialsPerCenters { get; set; }
     }
 }

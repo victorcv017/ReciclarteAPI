@@ -30,6 +30,19 @@ namespace ReciclarteAPI.Models
                 .HasIndex(e => e.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<MaterialsPerCenter>()
+            .HasKey(mc => new { mc.CenterId, mc.MaterialId});
+
+            modelBuilder.Entity<MaterialsPerCenter>()
+                .HasOne(mc => mc.Center)
+                .WithMany(c => c.MaterialsPerCenters)
+                .HasForeignKey(mc => mc.CenterId);
+
+            modelBuilder.Entity<MaterialsPerCenter>()
+                .HasOne(mc => mc.Material)
+                .WithMany(m => m.MaterialsPerCenters)
+                .HasForeignKey(mc => mc.MaterialId);
+
             base.OnModelCreating(modelBuilder);
 
 

@@ -15,13 +15,22 @@ namespace ReciclarteAPI.Controllers
     {
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        [Authorize(Policy = "PolicyUser")]
+        public ActionResult<string> values()
         {
-            return new string[] { "value1", "value2" };
+            var claims = User.Claims.ToList();
+            var type = claims.Any(x => x.Type == "Type" && x.Value == "Enterprise");
+            if (type)
+            {
+                return Ok("usas");
+            }
+            
+            return Ok("holi");
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult<string> Get(int id)
         {
             return "value";

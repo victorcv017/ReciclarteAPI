@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace ReciclarteAPI.Models
 {
-    public class UserInfo
+    public class EnterpriseInfo
     {
-        public string Curp { get; set; }
+        public string RFC { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; } 
-        public Addresses Address { get; set; }
+        public string Password { get; set; }
     }
 }

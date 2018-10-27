@@ -48,7 +48,7 @@ namespace ReciclarteAPI.Controllers
 
         // PUT: api/Enterprises/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnterprises([FromRoute] int id, [FromBody] Enterprises enterprises)
+        public async Task<IActionResult> PutEnterprises([FromRoute] string id, [FromBody] Enterprises enterprises)
         {
             if (!ModelState.IsValid)
             {
@@ -117,7 +117,7 @@ namespace ReciclarteAPI.Controllers
             return Ok(enterprises);
         }
 
-        private bool EnterprisesExists(int id)
+        private bool EnterprisesExists(string id)
         {
             return _context.Enterprises.Any(e => e.Id == id);
         }
