@@ -23,15 +23,18 @@ namespace ReciclarteAPI.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
         public AccountController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
+            ApplicationDbContext context,
             IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            this._configuration = configuration;
+            _configuration = configuration;
+            _context = context;
         }
 
         [Route("CreateUser")]
@@ -195,9 +198,10 @@ namespace ReciclarteAPI.Controllers
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user is null)
             {
-                return Ok(User.Identity.Name + " gola " );
+                return NotFound();
             }
-            return Ok(user);
+
+            return Ok(_context.Users.Find(user.Id));
         }
 
     }

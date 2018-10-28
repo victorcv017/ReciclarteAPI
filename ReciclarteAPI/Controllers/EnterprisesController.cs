@@ -22,9 +22,18 @@ namespace ReciclarteAPI.Controllers
 
         // GET: api/Enterprises
         [HttpGet]
-        public IEnumerable<Enterprises> GetEnterprises()
+        public IEnumerable<EnterpriseInfo> GetEnterprises()
         {
-            return _context.Enterprises;
+            return _context.Enterprises
+                .Include(x => x.Offices)
+                .ThenInclude(o => o.Address)
+                .ToList()
+                .Select(e => new EnterpriseInfo
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Offices = e.Offices
+                });
         }
 
         // GET: api/Enterprises/5
@@ -36,7 +45,17 @@ namespace ReciclarteAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var enterprises = _context.Enterprises.Include(x => x.Offices).ThenInclude(o => o.Address).FirstOrDefault(x => x.Id == id);
+            var enterprises = _context.Enterprises
+                .Include(x => x.Offices)
+                .ThenInclude(o => o.Address)
+                .ToList()
+                .Select(e => new EnterpriseInfo
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Offices = e.Offices
+                })
+                .FirstOrDefault(x => x.Id == id);
 
             if (enterprises == null)
             {
