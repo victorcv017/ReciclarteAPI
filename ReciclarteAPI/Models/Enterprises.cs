@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace ReciclarteAPI.Models
 {
@@ -7,5 +8,6 @@ namespace ReciclarteAPI.Models
         public string Name { get; set; }
         public string Balance { get; set; }
         public string RFC { get; set; }
+        public List<Offices> Offices { get; set; }
     }
 }

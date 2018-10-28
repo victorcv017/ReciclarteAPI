@@ -29,14 +29,14 @@ namespace ReciclarteAPI.Controllers
 
         // GET: api/Enterprises/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEnterprises([FromRoute] int id)
+        public ActionResult GetEnterprises([FromRoute] string id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var enterprises = await _context.Enterprises.FindAsync(id);
+            var enterprises = _context.Enterprises.Include(x => x.Offices).ThenInclude(o => o.Address).FirstOrDefault(x => x.Id == id);
 
             if (enterprises == null)
             {
@@ -47,10 +47,15 @@ namespace ReciclarteAPI.Controllers
         }
 
          // GET: api/Enterprises/id/Offices
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOficces([FromRoute] string id)
+        [HttpGet("{id}/Offices")]
+        public ActionResult GetOficces([FromRoute] string id)
         {
-            List<Offices> offices =  _context.Offices.Where(o => o.EnterpriseId == id).ToList();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<Offices> offices =  _context.Offices.Where(o => o.EnterpriseId == id).Include(x => x.Address).ToList();
 
             if (offices == null)
             {
@@ -58,28 +63,22 @@ namespace ReciclarteAPI.Controllers
             }
 
             return Ok(offices);
-
-
-
         }
 
 
-        // GET: api/Enterprises/id/Offices/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOffice([FromRoute] long id)
-        {
-            var office = await _context.Offices.FindAsync(id);
+        //// GET: api/Enterprises/id/Offices/5
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetOffice([FromRoute] long id)
+        //{
+        //    var office = await _context.Offices.FindAsync(id);
 
-            if (office == null)
-            {
-                return NotFound();
-            }
+        //    if (office == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(office);
-
-
-
-        }
+        //    return Ok(office);
+        //}
 
         // PUT: api/Enterprises/5
         [HttpPut("{id}")]

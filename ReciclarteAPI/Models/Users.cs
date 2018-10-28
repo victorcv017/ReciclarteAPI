@@ -19,6 +19,7 @@ namespace ReciclarteAPI.Models
         [ForeignKey("Address")]
         public long AddressId { get; set; }
         public Addresses Address { get; set; }
+        public List<Transactions> Transactions { get; set; }
 
         /*ForeignKey("Pais")]
         public int PaisId { get; set; }

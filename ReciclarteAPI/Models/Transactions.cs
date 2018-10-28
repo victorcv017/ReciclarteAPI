@@ -16,5 +16,7 @@ namespace ReciclarteAPI.Models
         [ForeignKey("User")]
         public string UserId { get; set; }
         public Users User { get; set; }
+        public List<Purchases> Purchases { get; set; }
+        public List<Sales> Sales { get; set; }
     }
 }
