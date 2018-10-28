@@ -46,6 +46,41 @@ namespace ReciclarteAPI.Controllers
             return Ok(enterprises);
         }
 
+         // GET: api/Enterprises/id/Offices
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOficces([FromRoute] string id)
+        {
+            List<Offices> offices =  _context.Offices.Where(o => o.EnterpriseId == id).ToList();
+
+            if (offices == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(offices);
+
+
+
+        }
+
+
+        // GET: api/Enterprises/id/Offices/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOffice([FromRoute] long id)
+        {
+            var office = await _context.Offices.FindAsync(id);
+
+            if (office == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(office);
+
+
+
+        }
+
         // PUT: api/Enterprises/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEnterprises([FromRoute] string id, [FromBody] Enterprises enterprises)
