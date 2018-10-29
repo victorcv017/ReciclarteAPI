@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace ReciclarteAPI.Models
         [ForeignKey("Address")]
         public long AddressId { get; set; }
         public Addresses Address { get; set; }
+        [JsonProperty(PropertyName = "materials")]
         public List<MaterialsPerCenter> MaterialsPerCenters { get; set; }
     }
 }

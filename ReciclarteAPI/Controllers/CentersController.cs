@@ -24,7 +24,9 @@ namespace ReciclarteAPI.Controllers
         [HttpGet]
         public IEnumerable<Centers> GetCenters()
         {
-            return _context.Centers;
+            return _context.Centers
+                .Include(x => x.Address)
+                .Include(x => x.MaterialsPerCenters).ThenInclude(m => m.Material);
         }
 
         // GET: api/Centers/5
