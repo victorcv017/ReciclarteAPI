@@ -10,7 +10,6 @@ namespace ReciclarteAPI.Models
     public class Offices
     {
         public long Id { get; set; }
-        public string Name { get; set; }
         public string Schedule { get; set; }
         public string Point { get; set; }
         [ForeignKey("Enterprise")]
