@@ -10,6 +10,8 @@ namespace ReciclarteAPI.Models
 {
     public class Users : IdentityUser
     {
+        public string Name { get; set; }
+        public string Surname { get; set; }
         public string Curp { get; set; }
         public string Balance { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

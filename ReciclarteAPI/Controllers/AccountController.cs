@@ -43,7 +43,7 @@ namespace ReciclarteAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new Users { UserName = model.Email, Email = model.Email , Curp = model.Curp , Address = model.Address};
+                var user = new Users { UserName = model.Email, Email = model.Email , Curp = model.Curp , Address = model.Address , Name = model.Name , Surname = model.Surname};
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
