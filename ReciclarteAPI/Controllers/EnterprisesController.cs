@@ -25,14 +25,11 @@ namespace ReciclarteAPI.Controllers
         public IEnumerable<EnterpriseInfo> GetEnterprises()
         {
             return _context.Enterprises
-                .Include(x => x.Offices)
-                .ThenInclude(o => o.Address)
                 .ToList()
                 .Select(e => new EnterpriseInfo
                 {
                     Id = e.Id,
-                    Name = e.Name,
-                    Offices = e.Offices
+                    Name = e.Name
                 });
         }
 
@@ -46,14 +43,11 @@ namespace ReciclarteAPI.Controllers
             }
 
             var enterprises = _context.Enterprises
-                .Include(x => x.Offices)
-                .ThenInclude(o => o.Address)
                 .ToList()
                 .Select(e => new EnterpriseInfo
                 {
                     Id = e.Id,
-                    Name = e.Name,
-                    Offices = e.Offices
+                    Name = e.Name
                 })
                 .FirstOrDefault(x => x.Id == id);
 
@@ -65,7 +59,7 @@ namespace ReciclarteAPI.Controllers
             return Ok(enterprises);
         }
 
-         // GET: api/Enterprises/id/Offices
+        // GET: api/Enterprises/id/Offices
         [HttpGet("{id}/Offices")]
         public ActionResult GetOficces([FromRoute] string id)
         {
@@ -74,7 +68,7 @@ namespace ReciclarteAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            List<Offices> offices =  _context.Offices.Where(o => o.EnterpriseId == id).Include(x => x.Address).ToList();
+            List<Offices> offices = _context.Offices.Where(o => o.EnterpriseId == id).Include(x => x.Address).ToList();
 
             if (offices == null)
             {
@@ -173,6 +167,22 @@ namespace ReciclarteAPI.Controllers
         private bool EnterprisesExists(string id)
         {
             return _context.Enterprises.Any(e => e.Id == id);
+        }
+
+        // GET: api/Enterprises/offices/items
+        [HttpGet("offices/items")]
+        public IEnumerable<EnterpriseInfo> GetEnterprisesWithOffices()
+        {
+            return _context.Enterprises
+                .Include(x => x.Offices).ThenInclude(o => o.Address)
+                .Include(x => x.Offices).ThenInclude(o => o.Items)
+                .ToList()
+                .Select(e => new EnterpriseInfo
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Offices = e.Offices
+                });
         }
     }
 }
