@@ -27,32 +27,33 @@ namespace ReciclarteAPI.Controllers
             //Usuarios
             var dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68100, Number = 10, Street = "Lazaro Cardenas" };
             _context.Add(dir);
-            _context.SaveChanges();
-            var user = new Users { Name ="Usuario" , Surname ="Apelidos" ,UserName = "usuario@gmail.com", Email = "usuario@gmail.com", Curp = "BADD110313HCMLNS09", Address = dir };
-            var enterprise = new Enterprises() { UserName = "empresa1@gmail.com", Name = "Empresa 1" , Email = "empresa1@gmail.com" };
-            var enterprise2 = new Enterprises() { UserName = "empresa2@gmail.com", Name = "Empresa 2" , Email = "empresa2@gmail.com" };
+            var user = new Users { Name = "Usuario", Surname = "Apelidos", UserName = "usuario@gmail.com", Email = "usuario@gmail.com", Curp = "BADD110313HCMLNS09", Address = dir };
+            var enterprise = new Enterprises() { UserName = "empresa1@gmail.com", Name = "Empresa 1", Email = "empresa1@gmail.com" };
+            var enterprise2 = new Enterprises() { UserName = "empresa2@gmail.com", Name = "Empresa 2", Email = "empresa2@gmail.com" };
             await _userManager.CreateAsync(user, "Aa12345SDFUS.6!!");
             await _userManager.CreateAsync(enterprise, "Aa12345SDFENTER.6!!");
             await _userManager.CreateAsync(enterprise2, "Aa12345SDFENTER2.6!!");
             int i;
-            for(i = 0; i < 10; i++)
+            for (i = 0; i < 10; i++)
             {
                 dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68100 + i, Number = i, Street = "Lazaro Cardenas numero " + i };
-                var office = new Offices { Address = dir, Enterprise = enterprise, Point = "" + (70 + i) + "," +  (80 + i) , Schedule = @"{ ""L"" : ""13:00-18:00"" , ""M"" : ""14:00-13:00""}" };
-                _context.Add(dir);
+                var office = new Offices { Address = dir, Enterprise = enterprise, Point = "" + (70 + i) + "," + (80 + i), Schedule = @"{ ""L"" : ""13:00-18:00"" , ""M"" : ""14:00-13:00""}" };
+                _context.Add(office);
             }
-
-            for(; i < 20 ; i++)
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68300, Number = 1, Street = "Murgia numero " + i };
+            var center = new Centers() { Name = "Centro 1", Schedule = @"{ ""L"" : ""13:00-18:00"" , ""M"" : ""14:00-13:00""}", Address = dir };
+            for (; i < 20 ; i++)
             {
                 dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68100 + i, Number = i, Street = "Lazaro Cardenas numero " + i };
-                var office = new Offices { Address = dir, Enterprise = enterprise, Point = "" + (90 + i) + "," + (100 + i), Schedule = @"{ ""L"" : ""9:00-18:00"" , ""M"" : ""10:00-13:00""}" };
-                _context.Add(dir);
+                var office = new Offices { Address = dir, Enterprise = enterprise2, Point = "" + (90 + i) + "," + (100 + i), Schedule = @"{ ""L"" : ""9:00-18:00"" , ""M"" : ""10:00-13:00""}" };
+                _context.Add(office);
             }
-            var center = new Centers() { Name = "Centro 1", Schedule =  @"{ ""L"" : ""13:00-18:00"" , ""M"" : ""14:00-13:00""}", Address = dir };
-            var center2 = new Centers() { Name = "Centro 1", Schedule =  @"{ ""L"" : ""13:00-18:00"" , ""M"" : ""14:00-13:00""}", Address = dir };
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68400, Number = 2, Street = "Alcala numero " + i };
+            var center2 = new Centers() { Name = "Centro 2", Schedule =  @"{ ""L"" : ""11:00-18:00"" , ""M"" : ""18:00-13:00""}", Address = dir };
             var material1 = new Materials() { Material = "Plástico", Price = 10 };
             var material2 = new Materials() { Material = "Cartón", Price = 9 };
             var material3 = new Materials() { Material = "Papel", Price = 5 };
+            
             var mc = new MaterialsPerCenter() { Center = center, Material = material1 };
             _context.MaterialsPerCenter.Add(mc);
             mc = new MaterialsPerCenter() { Center = center, Material = material2 };
