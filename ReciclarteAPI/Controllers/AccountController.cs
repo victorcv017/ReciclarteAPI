@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ReciclarteAPI.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ReciclarteAPI.Controllers
 {
@@ -200,8 +202,24 @@ namespace ReciclarteAPI.Controllers
             {
                 return NotFound();
             }
-
-            return Ok(_context.Users.Find(user.Id));
+            
+            return Ok(_context.Users
+                .Include(x => x.Address)
+                .ToList()
+                .Select(e => new UserInfo
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Surname = e.Surname,
+                    Curp = e.Curp,
+                    Email = e.Email,
+                    Phone = e.PhoneNumber,
+                    Balance = e.Balance,
+                    BirthDate = e.BirthDate,
+                    Gender = e.Gender,
+                    Address = e.Address
+                })
+                .FirstOrDefault(x => x.Id == user.Id));
         }
 
     }
