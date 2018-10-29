@@ -59,6 +59,6 @@ namespace ReciclarteAPI.Models
         public DbSet<Purchases> Purchases { get; set; }
         public DbSet<Sales> Sales { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
-        public new DbSet<Users> Users { get; set; }
+        public DbSet<Users> Users { get; set; }
     }
 }

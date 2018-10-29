@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,10 +9,18 @@ namespace ReciclarteAPI.Models
 {
     public class UserInfo
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Curp { get; set; }
         public string Email { get; set; }
+        public string Balance { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime BirthDate { get; set; }
+        public string Gender { get; set; }
+        public string Signature { get; set; }
+        public string Phone { get; set; }
+        [JsonIgnore]
         public string Password { get; set; } 
         public Addresses Address { get; set; }
     }

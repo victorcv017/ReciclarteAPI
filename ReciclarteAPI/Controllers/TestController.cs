@@ -41,7 +41,7 @@ namespace ReciclarteAPI.Controllers
                 _context.Add(office);
             }
             dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68300, Number = 1, Street = "Murgia numero " + i };
-            var center = new Centers() { Name = "Centro 1", Schedule = @"{ ""L"" : ""13:00-18:00"" , ""M"" : ""14:00-13:00""}", Address = dir };
+            var center = new Centers() { Name = "Centro 1", Schedule = @"{ ""L"" : ""13:00-18:00"" , ""M"" : ""14:00-13:00""}", Address = dir, Point = "12.58,87.59" };
             for (; i < 20 ; i++)
             {
                 dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68100 + i, Number = i, Street = "Lazaro Cardenas numero " + i };
@@ -49,7 +49,7 @@ namespace ReciclarteAPI.Controllers
                 _context.Add(office);
             }
             dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68400, Number = 2, Street = "Alcala numero " + i };
-            var center2 = new Centers() { Name = "Centro 2", Schedule =  @"{ ""L"" : ""11:00-18:00"" , ""M"" : ""18:00-13:00""}", Address = dir };
+            var center2 = new Centers() { Name = "Centro 2", Schedule =  @"{ ""L"" : ""11:00-18:00"" , ""M"" : ""18:00-13:00""}", Address = dir , Point = "15.44,18.55"};
             var material1 = new Materials() { Material = "Plástico", Price = 10 };
             var material2 = new Materials() { Material = "Cartón", Price = 9 };
             var material3 = new Materials() { Material = "Papel", Price = 5 };

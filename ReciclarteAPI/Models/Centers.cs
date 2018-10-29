@@ -11,6 +11,7 @@ namespace ReciclarteAPI.Models
         public long Id { get; set; }
         public string Name { get; set; }
         public string Schedule { get; set; }
+        public string Point { get; set; }
         [ForeignKey("Address")]
         public long AddressId { get; set; }
         public Addresses Address { get; set; }
