@@ -29,7 +29,8 @@ namespace ReciclarteAPI.Controllers
                 .Select(e => new EnterpriseInfo
                 {
                     Id = e.Id,
-                    Name = e.Name
+                    Name = e.Name,
+                    Logo = e.Logo
                 });
         }
 
@@ -47,7 +48,8 @@ namespace ReciclarteAPI.Controllers
                 .Select(e => new EnterpriseInfo
                 {
                     Id = e.Id,
-                    Name = e.Name
+                    Name = e.Name,
+                    Logo = e.Logo
                 })
                 .FirstOrDefault(x => x.Id == id);
 
@@ -181,6 +183,7 @@ namespace ReciclarteAPI.Controllers
                 {
                     Id = e.Id,
                     Name = e.Name,
+                    Logo = e.Logo,
                     Offices = e.Offices
                 });
         }
