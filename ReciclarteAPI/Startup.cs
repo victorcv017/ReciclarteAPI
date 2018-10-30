@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using ReciclarteAPI.Models;
 
 namespace ReciclarteAPI
@@ -67,6 +68,7 @@ namespace ReciclarteAPI
         private void ConfigureJson(MvcJsonOptions obj)
         {
             obj.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            obj.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

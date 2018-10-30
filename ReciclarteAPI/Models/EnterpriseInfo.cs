@@ -12,9 +12,7 @@ namespace ReciclarteAPI.Models
         [JsonIgnore]
         public string RFC { get; set; }
         public string Name { get; set; }
-        [JsonIgnore]
         public string Email { get; set; }
-        [JsonIgnore]
         public string Password { get; set; }
         public List<Offices> Offices { get; set; }
     }

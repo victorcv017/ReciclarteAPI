@@ -222,5 +222,29 @@ namespace ReciclarteAPI.Controllers
                 .FirstOrDefault(x => x.Id == user.Id));
         }
 
+
+        [Route("user/transactions")]
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyUser")]
+        public async Task<IActionResult> UserTransactions()
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_context.Users
+                .Include(x => x.Transactions)
+                .ToList()
+                .Select(e => new UserInfo
+                {
+                    Id = e.Id,
+                    Transactions = e.Transactions
+                })
+                .FirstOrDefault(x => x.Id == user.Id));
+        }
+
     }
 }

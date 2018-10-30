@@ -20,8 +20,8 @@ namespace ReciclarteAPI.Models
         public string Gender { get; set; }
         public string Signature { get; set; }
         public string Phone { get; set; }
-        [JsonIgnore]
         public string Password { get; set; } 
         public Addresses Address { get; set; }
+        public List<Transactions> Transactions { get; set; }
     }
 }
