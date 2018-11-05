@@ -48,6 +48,51 @@ namespace ReciclarteAPI.Controllers
             return Ok(centers);
         }
 
+        // GET: api/Centers/id/Materials
+        [HttpGet("{id}/Materials")]
+        public ActionResult GetMaterials([FromRoute] long id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<MaterialsPerCenter> materials = _context.MaterialsPerCenter.Where(c => c.CenterId == id).Include(m => m.Material).ToList();
+
+            if (materials == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(materials);
+        }
+
+        // GET: api/Centers/id/Logo
+        [HttpGet("{id}/Logo")]
+        public async Task<IActionResult> GetLogo([FromRoute] long id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var centers = await _context.Centers.FindAsync(id);
+
+            if (centers == null)
+            {
+                return NotFound();
+            }
+
+            var logo = centers.Logo;
+
+            if (logo == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(logo);
+        }
+
         // PUT: api/Centers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCenters([FromRoute] long id, [FromBody] Centers centers)
