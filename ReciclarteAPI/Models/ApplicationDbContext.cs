@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,10 +45,50 @@ namespace ReciclarteAPI.Models
                 .WithMany(m => m.MaterialsPerCenters)
                 .HasForeignKey(mc => mc.MaterialId);
 
+            modelBuilder.Entity<Centers>()
+                .Property(b => b.Point)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<Point>(v)
+                 );
+
+            modelBuilder.Entity<Centers>()
+                .Property(b => b.Schedule)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<Schedule>(v)
+                 );
+
+            modelBuilder.Entity<Offices>()
+                .Property(b => b.Point)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<Point>(v)
+                 );
+
+            modelBuilder.Entity<Offices>()
+                .Property(b => b.Schedule)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<Schedule>(v)
+                 );
+
             base.OnModelCreating(modelBuilder);
 
 
 
+        }
+
+        public class CentersConfiguration : IEntityTypeConfiguration<Centers>
+        {
+            public void Configure(EntityTypeBuilder<Centers> builder)
+            {
+
+                // This Converter will perform the conversion to and from Json to the desired type
+                builder.Property(e => e.Point).HasConversion(
+                    v => JsonConvert.SerializeObject(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+                    v => JsonConvert.DeserializeObject<Point>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+            }
         }
 
         public DbSet<Addresses> Addresses { get; set; }
