@@ -98,6 +98,7 @@ namespace ReciclarteAPI.Controllers
             _context.Sales.Add(sal);
             _context.SaveChanges();
 
+=======
             return Ok();
             
         }
