@@ -234,16 +234,17 @@ namespace ReciclarteAPI.Controllers
             {
                 return NotFound();
             }
-
+            //return Ok(_context.Users.FirstOrDefault(x => x.UserName == User.Identity.Name));
             return Ok(_context.Users
-                .Include(x => x.Transactions)
+                .Include(x => x.Transactions).ThenInclude(t => t.Sales).ThenInclude(s => s.Center)
+                .Include(x => x.Transactions).ThenInclude(t => t.Purchases).ThenInclude(p => p.Item.Office.Enterprise)
                 .ToList()
+                .Where(x => x.Id == user.Id)
                 .Select(e => new UserInfo
                 {
-                    Id = e.Id,
                     Transactions = e.Transactions
                 })
-                .FirstOrDefault(x => x.Id == user.Id));
+                );
         }
 
     }
