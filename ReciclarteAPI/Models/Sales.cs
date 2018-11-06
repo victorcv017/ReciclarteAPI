@@ -9,7 +9,7 @@ namespace ReciclarteAPI.Models
     public class Sales
     {
         public long Id { set; get; }
-        public long Weight { set; get; }
+        public double Weight { set; get; }
         [ForeignKey("Transaction")]
         public long TransactionId { get; set; }
         public Transactions Transaction { get; set; }

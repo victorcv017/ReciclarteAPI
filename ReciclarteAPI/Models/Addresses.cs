@@ -11,7 +11,7 @@ namespace ReciclarteAPI.Models
         public string City { get; set; }
         public string Township { get; set; }
         public string Street { get; set; }
-        public long Number { get; set; }
-        public long PC { get; set; }
+        public int Number { get; set; }
+        public int PC { get; set; }
     }
 }
