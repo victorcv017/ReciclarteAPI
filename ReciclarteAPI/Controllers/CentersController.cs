@@ -50,7 +50,7 @@ namespace ReciclarteAPI.Controllers
 
         // GET: api/Centers/id/Materials
         [HttpGet("{id}/Materials")]
-        public ActionResult GetMaterials([FromRoute] long id)
+        public ActionResult GetMaterials([FromRoute] string id)
         {
             if (!ModelState.IsValid)
             {
@@ -95,7 +95,7 @@ namespace ReciclarteAPI.Controllers
 
         // PUT: api/Centers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCenters([FromRoute] long id, [FromBody] Centers centers)
+        public async Task<IActionResult> PutCenters([FromRoute] string id, [FromBody] Centers centers)
         {
             if (!ModelState.IsValid)
             {
@@ -164,7 +164,7 @@ namespace ReciclarteAPI.Controllers
             return Ok(centers);
         }
 
-        private bool CentersExists(long id)
+        private bool CentersExists(string id)
         {
             return _context.Centers.Any(e => e.Id == id);
         }

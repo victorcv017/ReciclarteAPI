@@ -14,7 +14,7 @@ namespace ReciclarteAPI.Models
         public long TransactionId { get; set; }
         public Transactions Transaction { get; set; }
         [ForeignKey("Center")]
-        public long CenterId { get; set; }
+        public string CenterId { get; set; }
         public Centers Center { get; set; }
         [ForeignKey("Material")]
         public long MaterialId { get; set; }
