@@ -20,9 +20,7 @@ namespace ReciclarteAPI.Models
         public DateTime BirthDate { get; set; }
         public char Gender { get; set; }
         public string Signature { get; set; } 
-        [ForeignKey("Address")]
-        public long AddressId { get; set; }
-        public Addresses Address { get; set; }
         public List<Transactions> Transactions { get; set; }
+        public Addresses Address { get; set; }
     }
 }
