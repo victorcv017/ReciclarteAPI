@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReciclarteAPI.Models;
+using ReciclarteAPI.Models.Info;
 
 namespace ReciclarteAPI.Controllers
 {
@@ -61,6 +65,29 @@ namespace ReciclarteAPI.Controllers
             return Ok(enterprises);
         }
 
+        // GET: api/Enterprises/Offices
+        [HttpGet("Offices")]
+        public ActionResult GetEnterprisesAndOffices()
+        {
+            return Ok(_context.Enterprises
+                .Include(x => x.Offices)
+                .ToList()
+                .Select(e => new EnterpriseInfo
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Logo = e.Logo,
+                    Offices = e.Offices.Select(o => new OfficesInfo
+                    {
+                        Id = o.Id,
+                        Schedule = o.Schedule,
+                        Point = o.Point,
+                        Address = o.Address
+
+                    })
+                }));
+        }
+
         // GET: api/Enterprises/id/Offices
         [HttpGet("{id}/Offices")]
         public ActionResult GetOficces([FromRoute] string id)
@@ -70,7 +97,16 @@ namespace ReciclarteAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            List<Offices> offices = _context.Offices.Where(o => o.EnterpriseId == id).Include(x => x.Address).ToList();
+            var offices = _context.Offices.
+                Where(o => o.EnterpriseId == id)
+                .Include(x => x.Address)
+                .ToList()
+                .Select(e => new OfficesInfo {
+                    Id = e.Id,
+                    Schedule = e.Schedule,
+                    Point = e.Point,
+                    Address = e.Address
+                });
 
             if (offices == null)
             {
@@ -80,21 +116,7 @@ namespace ReciclarteAPI.Controllers
             return Ok(offices);
         }
 
-
-        //// GET: api/Enterprises/id/Offices/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetOffice([FromRoute] long id)
-        //{
-        //    var office = await _context.Offices.FindAsync(id);
-
-        //    if (office == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(office);
-        //}
-
+        //for edit verify autenthication and change route
         // PUT: api/Enterprises/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEnterprises([FromRoute] string id, [FromBody] Enterprises enterprises)
@@ -130,42 +152,6 @@ namespace ReciclarteAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Enterprises
-        [HttpPost]
-        public async Task<IActionResult> PostEnterprises([FromBody] Enterprises enterprises)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            _context.Enterprises.Add(enterprises);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetEnterprises", new { id = enterprises.Id }, enterprises);
-        }
-
-        // DELETE: api/Enterprises/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEnterprises([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var enterprises = await _context.Enterprises.FindAsync(id);
-            if (enterprises == null)
-            {
-                return NotFound();
-            }
-
-            _context.Enterprises.Remove(enterprises);
-            await _context.SaveChangesAsync();
-
-            return Ok(enterprises);
-        }
-
         private bool EnterprisesExists(string id)
         {
             return _context.Enterprises.Any(e => e.Id == id);
@@ -173,18 +159,43 @@ namespace ReciclarteAPI.Controllers
 
         // GET: api/Enterprises/offices/items
         [HttpGet("offices/items")]
-        public IEnumerable<EnterpriseInfo> GetEnterprisesWithOffices()
+        public ActionResult GetEnterprisesWithOfficesAndItems()
         {
-            return _context.Enterprises
-                .Include(x => x.Offices).ThenInclude(o => o.Address)
-                .Include(x => x.Offices).ThenInclude(o => o.Items)
+            //return Ok(_context.Offices.Include(o => o.Items));
+            return Ok(_context.Enterprises
+                .Include(x => x.Offices)
+                    .ThenInclude(o => o.Items)
                 .ToList()
                 .Select(e => new EnterpriseInfo
                 {
                     Id = e.Id,
                     Name = e.Name,
                     Logo = e.Logo,
-                    Offices = e.Offices
+                    Offices = e.Offices.Select(o => new OfficesInfo
+                    {
+                        Id = o.Id,
+                        Schedule = o.Schedule,
+                        Point = o.Point,
+                        Address = o.Address,
+                        Items = o.Items
+
+                    })
+                }));
+        }
+
+        // GET: api/Enterprises/myEnterprise
+        [HttpGet("myEnterprise")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public IEnumerable<EnterpriseInfo> GetMyEnterprise()
+        {
+            return _context.Enterprises
+                .ToList()
+                .Select(e => new EnterpriseInfo
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Logo = e.Logo
                 });
         }
     }

@@ -60,6 +60,8 @@ namespace ReciclarteAPI
             {
                 options.AddPolicy("PolicyUser", pol => pol.RequireClaim("Type", "User"));
                 options.AddPolicy("PolicyEnterprise", pol => pol.RequireClaim("Type", "Enterprise"));
+                options.AddPolicy("PolicyCenter", pol => pol.RequireClaim("Type", "Center"));
+                options.AddPolicy("PolicyOffice", pol => pol.RequireClaim("Type", "Office"));
             });
             services.AddMvc().AddJsonOptions(ConfigureJson);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
