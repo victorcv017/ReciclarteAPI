@@ -14,6 +14,7 @@ namespace ReciclarteAPI.Models
         public Materials Material { get; set; }
         [JsonIgnore]
         public string CenterId { get; set; }
+        [JsonIgnore]
         public Centers Center { get; set; }
     }
 }

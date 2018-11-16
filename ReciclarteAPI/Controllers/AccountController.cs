@@ -39,17 +39,16 @@ namespace ReciclarteAPI.Controllers
             _context = context;
         }
 
-        [Route("CreateUser")]
-        [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] UserInfo model)
+        [HttpPost("Signup")]
+        public async Task<IActionResult> CreateUser([FromBody] SignupInfo model)
         {
             if (ModelState.IsValid)
             {
-                var user = new Users { UserName = model.Email, Email = model.Email , Curp = model.Curp , Address = model.Address , Name = model.Name , Surname = model.Surname};
+                var user = new Users { UserName = model.Email, Email = model.Email, Curp = model.Curp };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return BuildTokenUser(model);
+                    return BuildToken(new LoginInfo() { Email = model.Email , Password = model.Password} , "User");
                 }
                 else
                 {
@@ -63,41 +62,15 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        [Route("CreateEnterprise")]
-        [HttpPost]
-        public async Task<IActionResult> CreateEnterprise([FromBody] EnterpriseInfo model)
+        [HttpPost("User/Login")]
+        public async Task<IActionResult> UserLogin([FromBody] LoginInfo loginInfo)
         {
             if (ModelState.IsValid)
             {
-                var enterprise = new Enterprises { Name = model.Name, RFC = model.RFC, UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(enterprise, model.Password);
+                var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return BuildTokenEnterprise(model);
-                }
-                else
-                {
-                    return BadRequest("Usuario o Contraseña Invalidos");
-                }
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
-
-        }
-
-
-        [HttpPost]
-        [Route("User/Login")]
-        public async Task<IActionResult> UserLogin([FromBody] UserInfo userInfo)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    return BuildTokenUser(userInfo);
+                    return BuildToken(loginInfo, "User");
                 }
                 else
                 {
@@ -111,15 +84,15 @@ namespace ReciclarteAPI.Controllers
             }
         }
 
-        [Route("Enterprise/Login")]
-        public async Task<IActionResult> EnterpriseLogin([FromBody] EnterpriseInfo enterpriseInfo)
+        [HttpPost("Enterprise/Login")]
+        public async Task<IActionResult> EnterpriseLogin([FromBody] LoginInfo loginInfo)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(enterpriseInfo.Email, enterpriseInfo.Password, isPersistent: false, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return BuildTokenEnterprise(enterpriseInfo);
+                    return BuildToken(loginInfo, "Enterprise");
                 }
                 else
                 {
@@ -133,13 +106,14 @@ namespace ReciclarteAPI.Controllers
             }
         }
 
-        private IActionResult BuildTokenUser(UserInfo userInfo)
+
+        private IActionResult BuildToken(LoginInfo loginInfo, string type)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
-                new Claim("Type", "User"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.UniqueName, loginInfo.Email),
+                    new Claim("Type", type),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave"]));
@@ -162,37 +136,7 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        private IActionResult BuildTokenEnterprise(EnterpriseInfo enterpriseInfo)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.UniqueName, enterpriseInfo.Email),
-                new Claim("Type", "Enterprise"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var expiration = DateTime.UtcNow.AddHours(1);
-
-            JwtSecurityToken token = new JwtSecurityToken(
-               issuer: "yourdomain.com",
-               audience: "yourdomain.com",
-               claims: claims,
-               expires: expiration,
-               signingCredentials: creds);
-
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = expiration
-            });
-
-        }
-
-        [Route("user/profile")]
-        [HttpGet]
+        [HttpGet("User/Profile")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyUser")]
         public async Task<IActionResult> UserProfile()
@@ -202,9 +146,10 @@ namespace ReciclarteAPI.Controllers
             {
                 return NotFound();
             }
-            
+
             return Ok(_context.Users
                 .Include(x => x.Address)
+                .Where(x => x.Id == user.Id)
                 .ToList()
                 .Select(e => new UserInfo
                 {
@@ -218,13 +163,10 @@ namespace ReciclarteAPI.Controllers
                     BirthDate = e.BirthDate,
                     Gender = e.Gender,
                     Address = e.Address
-                })
-                .FirstOrDefault(x => x.Id == user.Id));
+                }));
         }
 
-
-        [Route("user/transactions")]
-        [HttpGet]
+        [HttpGet("User/Transactions")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyUser")]
         public async Task<IActionResult> UserTransactions()
@@ -234,12 +176,12 @@ namespace ReciclarteAPI.Controllers
             {
                 return NotFound();
             }
-            //return Ok(_context.Users.FirstOrDefault(x => x.UserName == User.Identity.Name));
+
             return Ok(_context.Users
                 .Include(x => x.Transactions).ThenInclude(t => t.Sales).ThenInclude(s => s.Center)
                 .Include(x => x.Transactions).ThenInclude(t => t.Purchases).ThenInclude(p => p.Item.Office.Enterprise)
-                .ToList()
                 .Where(x => x.Id == user.Id)
+                .ToList()
                 .Select(e => new UserInfo
                 {
                     Transactions = e.Transactions
