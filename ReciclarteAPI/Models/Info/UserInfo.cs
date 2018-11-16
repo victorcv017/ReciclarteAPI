@@ -20,7 +20,6 @@ namespace ReciclarteAPI.Models
         public char Gender { get; set; }
         public string Signature { get; set; }
         public string Phone { get; set; }
-        public string Password { get; set; }
         public Addresses Address { get; set; }
         public List<Transactions> Transactions { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using ReciclarteAPI.Models.Info;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,7 @@ namespace ReciclarteAPI.Models
         [JsonIgnore]
         public string RFC { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
         public string Logo { get; set; }
-        public List<Offices> Offices { get; set; }
+        public IEnumerable<OfficesInfo> Offices { get; set; }
     }
 }
