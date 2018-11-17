@@ -29,7 +29,7 @@ namespace ReciclarteAPI.Controllers
 
         // GET: api/Offices/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOffices([FromRoute] long id)
+        public async Task<IActionResult> GetOffices([FromRoute] string id)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace ReciclarteAPI.Controllers
         /*
         // GET: api/Offices/5/Items
         [HttpGet("{id}/Items")]
-        public IEnumerable<Items> GetOfficesItemsOfId([FromRoute] long id)
+        public IEnumerable<Items> GetOfficesItemsOfId([FromRoute] string id)
         {
             var office = _context.Offices.Where(o => o.Id == id).Include(i => i.Items).ToList();
             var items = office[0].Items;
@@ -114,7 +114,7 @@ namespace ReciclarteAPI.Controllers
 
         // DELETE: api/Offices/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOffices([FromRoute] long id)
+        public async Task<IActionResult> DeleteOffices([FromRoute] string id)
         {
             if (!ModelState.IsValid)
             {

@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using ReciclarteAPI.Models;
 using ReciclarteAPI.Models.Info;
 
@@ -18,10 +24,16 @@ namespace ReciclarteAPI.Controllers
     public class EnterprisesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public EnterprisesController(ApplicationDbContext context)
+        public EnterprisesController(ApplicationDbContext context,
+                            UserManager<IdentityUser> userManager,
+                            IConfiguration configuration)
         {
             _context = context;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
         // GET: api/Enterprises
@@ -198,5 +210,70 @@ namespace ReciclarteAPI.Controllers
                     Logo = e.Logo
                 });
         }
+
+        [HttpPost("{id}/CreateOffice")]
+        public async Task<IActionResult> CreateOffice([FromRoute] string id, [FromBody] OfficeAux model)
+        {
+            if (ModelState.IsValid)
+            {
+                var enterprises = await _context.Enterprises.FindAsync(id);
+
+                if (enterprises == null)
+                {
+                    return NotFound();
+                }
+
+                var office = new Offices { UserName = model.Email, Email = model.Email, Address = model.Address,
+                                           Enterprise = enterprises, Point = model.Point, Schedule = model.Schedule };
+                var result = await _userManager.CreateAsync(office, model.Password);
+                if (result.Succeeded)
+                {
+                    return BuildToken(new LoginInfo() { Email = model.Email, Password = model.Password }, "Office");
+                }
+                else
+                {
+                    return BadRequest("Usuario o Contraseña Invalidos");
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+
+        }
+
+        private IActionResult BuildToken(LoginInfo loginInfo, string type)
+        {
+            var claims = new[]
+            {
+                    new Claim(JwtRegisteredClaimNames.UniqueName, loginInfo.Email),
+                    new Claim("Type", type),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var expiration = DateTime.UtcNow.AddHours(1);
+
+            JwtSecurityToken token = new JwtSecurityToken(
+               issuer: "yourdomain.com",
+               audience: "yourdomain.com",
+               claims: claims,
+               expires: expiration,
+               signingCredentials: creds);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = expiration
+            });
+
+        }
+    }
+    
+    public class OfficeAux : Offices
+    {
+        public string Password;
     }
 }
