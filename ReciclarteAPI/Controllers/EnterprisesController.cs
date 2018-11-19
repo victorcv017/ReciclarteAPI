@@ -202,6 +202,7 @@ namespace ReciclarteAPI.Controllers
         public IEnumerable<EnterpriseInfo> GetMyEnterprise()
         {
             return _context.Enterprises
+                .Where(e => e.Email == User.Identity.Name)
                 .ToList()
                 .Select(e => new EnterpriseInfo
                 {
@@ -211,13 +212,20 @@ namespace ReciclarteAPI.Controllers
                 });
         }
 
-        [HttpPost("{id}/CreateOffice")]
-        public async Task<IActionResult> CreateOffice([FromRoute] string id, [FromBody] OfficeAux model)
+        [HttpPost("CreateOffice")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public async Task<IActionResult> CreateOffice([FromBody] OfficeAux model)
         {
             if (ModelState.IsValid)
             {
-                var enterprises = await _context.Enterprises.FindAsync(id);
+                var list = _context.Enterprises.Where(e => e.Email == User.Identity.Name).ToList();
+                if(list.Count != 1)
+                {
+                    return NotFound();
+                }
 
+                var enterprises = list[0];
                 if (enterprises == null)
                 {
                     return NotFound();
