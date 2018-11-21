@@ -38,11 +38,11 @@ namespace ReciclarteAPI.Controllers
 
         // GET: api/Enterprises
         [HttpGet]
-        public IEnumerable<EnterpriseInfo> GetEnterprises()
+        public IEnumerable<EnterprisesInfo> GetEnterprises()
         {
             return _context.Enterprises
                 .ToList()
-                .Select(e => new EnterpriseInfo
+                .Select(e => new EnterprisesInfo
                 {
                     Id = e.Id,
                     Name = e.Name,
