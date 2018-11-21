@@ -89,7 +89,12 @@ namespace ReciclarteAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            var office = _context.Offices.Find(items.OfficesId);
+            if(office == null)
+            {
+                return NotFound();
+            }
+            items.Office = office;
             _context.Items.Add(items);
             await _context.SaveChangesAsync();
 
