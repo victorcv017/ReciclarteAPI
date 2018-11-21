@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ReciclarteAPI.Models
 {
-    public class EnterpriseInfo
+    public class EnterprisesInfo
     {
         public string Id { get; set; }
         [JsonIgnore]

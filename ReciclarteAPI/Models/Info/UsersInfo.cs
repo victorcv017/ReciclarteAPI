@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ReciclarteAPI.Models
 {
-    public class UserInfo
+    public class UsersInfo
     {
         public string Id { get; set; }
         public string Name { get; set; }
