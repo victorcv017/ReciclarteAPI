@@ -61,7 +61,7 @@ namespace ReciclarteAPI.Controllers
 
             var enterprises = _context.Enterprises
                 .ToList()
-                .Select(e => new EnterpriseInfo
+                .Select(e => new EnterprisesInfo
                 {
                     Id = e.Id,
                     Name = e.Name,
@@ -84,7 +84,7 @@ namespace ReciclarteAPI.Controllers
             return Ok(_context.Enterprises
                 .Include(x => x.Offices)
                 .ToList()
-                .Select(e => new EnterpriseInfo
+                .Select(e => new EnterprisesInfo
                 {
                     Id = e.Id,
                     Name = e.Name,
@@ -178,7 +178,7 @@ namespace ReciclarteAPI.Controllers
                 .Include(x => x.Offices)
                     .ThenInclude(o => o.Items)
                 .ToList()
-                .Select(e => new EnterpriseInfo
+                .Select(e => new EnterprisesInfo
                 {
                     Id = e.Id,
                     Name = e.Name,
@@ -199,12 +199,12 @@ namespace ReciclarteAPI.Controllers
         [HttpGet("myEnterprise")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
-        public IEnumerable<EnterpriseInfo> GetMyEnterprise()
+        public IEnumerable<EnterprisesInfo> GetMyEnterprise()
         {
             return _context.Enterprises
                 .Where(e => e.Email == User.Identity.Name)
                 .ToList()
-                .Select(e => new EnterpriseInfo
+                .Select(e => new EnterprisesInfo
                 {
                     Id = e.Id,
                     Name = e.Name,
@@ -276,6 +276,29 @@ namespace ReciclarteAPI.Controllers
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = expiration
             });
+
+        }
+
+        [HttpPost("CreateItem")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public async Task<IActionResult> CreateItem([FromBody] Items model)
+        {
+            if (ModelState.IsValid)
+            {
+                var myEnterprise = GetMyEnterprise();
+                var office = _context.Offices.Find(model.OfficesId);
+                if(office.EnterpriseId != myEnterprise.First().Id)
+                {
+                    return BadRequest(ModelState);
+                }
+                ItemsController _itemsController = new ItemsController(_context);
+                return await _itemsController.PostItems(model);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
 
         }
     }
