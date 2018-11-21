@@ -106,6 +106,50 @@ namespace ReciclarteAPI.Controllers
             }
         }
 
+        [HttpPost("Center/Login")]
+        public async Task<IActionResult> CenterLogin([FromBody] LoginInfo loginInfo)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return BuildToken(loginInfo, "Center");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Intento Inválido.");
+                    return BadRequest(ModelState);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpPost("Office/Login")]
+        public async Task<IActionResult> OfficeLogin([FromBody] LoginInfo loginInfo)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return BuildToken(loginInfo, "Office");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Intento Inválido.");
+                    return BadRequest(ModelState);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
 
         private IActionResult BuildToken(LoginInfo loginInfo, string type)
         {
@@ -151,7 +195,7 @@ namespace ReciclarteAPI.Controllers
                 .Include(x => x.Address)
                 .Where(x => x.Id == user.Id)
                 .ToList()
-                .Select(e => new UserInfo
+                .Select(e => new UsersInfo
                 {
                     Id = e.Id,
                     Name = e.Name,
@@ -182,7 +226,7 @@ namespace ReciclarteAPI.Controllers
                 .Include(x => x.Transactions).ThenInclude(t => t.Purchases).ThenInclude(p => p.Item.Office.Enterprise)
                 .Where(x => x.Id == user.Id)
                 .ToList()
-                .Select(e => new UserInfo
+                .Select(e => new UsersInfo
                 {
                     Transactions = e.Transactions
                 })
