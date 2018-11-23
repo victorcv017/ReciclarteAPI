@@ -279,6 +279,43 @@ namespace ReciclarteAPI.Controllers
 
         }
 
+        // PUT: api/Enterprises/MyOffice
+        [HttpPut("MyOffice")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public ActionResult UpdateMyOffice([FromBody] OfficeAux model)
+        {
+            var enterprise = _context.Enterprises.Include(e => e.Offices).First(e => e.Email == User.Identity.Name);
+            if (enterprise is null) return BadRequest();
+            var office = enterprise.Offices.FirstOrDefault(x => x.Email == model.Email);
+            if (office is null) return BadRequest();
+            if (!(model.Schedule is null)) office.Schedule = model.Schedule;
+            if (!(model.Point is null)) office.Point = model.Point;
+            if (!(model.Address is null)) office.Address = model.Address;
+            if (!(model.Password is null))
+            {
+                if (model.Email is null) return BadRequest();
+                var user = _userManager.Users.First(u => u.Email == model.Email);
+                if (user is null) return BadRequest();
+                _userManager.RemovePasswordAsync(user);
+                _userManager.AddPasswordAsync(user, model.Password);
+            }
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete("MyOffice")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public ActionResult DeleteOffice([FromBody] Offices model)
+        {
+            var enterprise = _context.Enterprises.Include(e => e.Offices).First(e => e.Email == User.Identity.Name);
+            if (enterprise is null) return BadRequest();
+            _context.Offices.Remove(enterprise.Offices.First(o => o.Email == model.Email));
+            _context.SaveChanges();
+            return Ok();
+        }
+
         [HttpPost("CreateItem")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
