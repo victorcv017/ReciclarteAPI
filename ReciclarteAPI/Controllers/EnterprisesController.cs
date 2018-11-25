@@ -285,7 +285,7 @@ namespace ReciclarteAPI.Controllers
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult UpdateMyOffice([FromBody] OfficeAux model)
         {
-            var enterprise = _context.Enterprises.Include(e => e.Offices).First(e => e.Email == User.Identity.Name);
+            var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return BadRequest();
             var office = enterprise.Offices.FirstOrDefault(x => x.Email == model.Email);
             if (office is null) return BadRequest();
@@ -295,7 +295,7 @@ namespace ReciclarteAPI.Controllers
             if (!(model.Password is null))
             {
                 if (model.Email is null) return BadRequest();
-                var user = _userManager.Users.First(u => u.Email == model.Email);
+                var user = _userManager.Users.FirstOrDefault(u => u.Email == model.Email);
                 if (user is null) return BadRequest();
                 _userManager.RemovePasswordAsync(user);
                 _userManager.AddPasswordAsync(user, model.Password);
@@ -309,9 +309,11 @@ namespace ReciclarteAPI.Controllers
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult DeleteOffice([FromBody] Offices model)
         {
-            var enterprise = _context.Enterprises.Include(e => e.Offices).First(e => e.Email == User.Identity.Name);
+            var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return BadRequest();
-            _context.Offices.Remove(enterprise.Offices.First(o => o.Email == model.Email));
+            var office = enterprise.Offices.FirstOrDefault(o => o.Email == model.Email);
+            if (office is null) return BadRequest();
+            _context.Offices.Remove(office);
             _context.SaveChanges();
             return Ok();
         }
@@ -325,7 +327,7 @@ namespace ReciclarteAPI.Controllers
             {
                 var myEnterprise = GetMyEnterprise();
                 var office = _context.Offices.Find(model.OfficesId);
-                if(office.EnterpriseId != myEnterprise.First().Id)
+                if(office.EnterpriseId != myEnterprise.FirstOrDefault().Id)
                 {
                     return BadRequest(ModelState);
                 }
@@ -337,6 +339,43 @@ namespace ReciclarteAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+        }
+
+        [HttpPut("UpdateItem")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public ActionResult UpdateItem([FromBody] Items model)
+        {
+            var enterprise = _context.Enterprises.Include(e => e.Offices)
+                                                 .ThenInclude(o => o.Items)
+                                                 .FirstOrDefault(e => e.Email == User.Identity.Name);
+            if (enterprise is null) return BadRequest();
+            var office = enterprise.Offices.FirstOrDefault(o => o.Id == model.OfficesId);
+            if (office is null) return BadRequest();
+            var item = office.Items.Find(i => i.Id == model.Id);
+            if (item is null) return BadRequest();
+            if (!(model.Name is null)) item.Name = model.Name;
+            if (!(model.Value is 0)) item.Value = model.Value;
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete("DeleteItem")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public ActionResult DeleteItem([FromBody] Items model)
+        {
+            var enterprise = _context.Enterprises.Include(e => e.Offices)
+                                                 .ThenInclude(o => o.Items)
+                                                 .FirstOrDefault(e => e.Email == User.Identity.Name);
+            if (enterprise is null) return BadRequest();
+            var office = enterprise.Offices.FirstOrDefault(o => o.Id == model.OfficesId);
+            if (office is null) return BadRequest();
+            var item = office.Items.Find(i => i.Id == model.Id);
+            if (item is null) return BadRequest();
+            _context.Items.Remove(item);
+            _context.SaveChanges();
+            return Ok();
         }
     }
     
