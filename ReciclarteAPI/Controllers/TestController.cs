@@ -26,83 +26,6 @@ namespace ReciclarteAPI.Controllers
         public async Task<IActionResult> Test()
         {
             /*
-           //Create an enterprise and a user
-            var dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68100, Number = 10, Street = "Lazaro Cardenas" };
-            _context.Add(dir);
-            var user = new Users { Name = "Usuario", Surname = "Apelidos", UserName = "usuario@gmail.com", Email = "usuario@gmail.com", Curp = "BADD110313HCMLNS09", Address = dir };
-            var enterprise = new Enterprises() { UserName = "empresa1@gmail.com", Name = "Empresa 1", Email = "empresa1@gmail.com" , Logo = "https://d500.epimg.net/cincodias/imagenes/2015/05/08/pyme/1431098283_691735_1431098420_noticia_normal.jpg" };
-            var enterprise2 = new Enterprises() { UserName = "empresa2@gmail.com", Name = "Empresa 2", Email = "empresa2@gmail.com" , Logo = "https://image.freepik.com/psd-gratis/empresa-comunicacion-vector-logo-plantilla_63-2568.jpg"};
-            await _userManager.CreateAsync(user, "Aa12345SDFUS.6!!");
-            await _userManager.CreateAsync(enterprise, "Aa12345SDFENTER.6!!");
-            await _userManager.CreateAsync(enterprise2, "Aa12345SDFENTER2.6!!");
-            int i;
-            var office = new Offices();
-            for (i = 0; i < 10; i++)
-            {
-                dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68100 + i, Number = i, Street = "Lazaro Cardenas numero " + i };
-                office = new Offices { Address = dir, Enterprise = enterprise, Point = new Point() { Lat = 70 + i , Long = 80 + i}, Schedule = new Schedule() { Lu = "13:00-18:00" , Ma = "14:00-13:00"} };
-                _context.Add(office);
-            }
-            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68300, Number = 1, Street = "Murgia numero " + i };
-            var center = new Centers() { Name = "Centro 1", Schedule = new Schedule() { Lu = "13:00-18:00", Ma = "14:00-13:00" } , Address = dir, Point = new Point() { Lat = 12.58, Long = 87.59 } };
-            for (; i < 20 ; i++)
-            {
-                dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68100 + i, Number = i, Street = "Lazaro Cardenas numero " + i };
-                office = new Offices { Address = dir, Enterprise = enterprise2, Point = new Point() { Lat = 90 + i, Long = 100 + i }, Schedule = new Schedule() { Lu = "9:00-18:00", Ma = "10:00-13:00" }  };
-                _context.Add(office);
-            }
-            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68400, Number = 2, Street = "Alcala numero " + i };
-            var center2 = new Centers() { Name = "Centro 2", Schedule = new Schedule() { Lu = "11:00-18:00", Ma = "12:00-19:00" } , Address = dir , Point = new Point() { Lat = 15.44, Long = 18.55 } };
-            var material1 = new Materials() { Material = "Plástico", Price = 10 };
-            var material2 = new Materials() { Material = "Cartón", Price = 9 };
-            var material3 = new Materials() { Material = "Papel", Price = 5 };
-            
-            var mc = new MaterialsPerCenter() { Center = center, Material = material1 };
-            _context.MaterialsPerCenter.Add(mc);
-            mc = new MaterialsPerCenter() { Center = center, Material = material2 };
-            _context.MaterialsPerCenter.Add(mc);
-            mc = new MaterialsPerCenter() { Center = center2, Material = material1 };
-            _context.MaterialsPerCenter.Add(mc);
-            mc = new MaterialsPerCenter() { Center = center2, Material = material2 };
-            _context.MaterialsPerCenter.Add(mc);
-            mc = new MaterialsPerCenter() { Center = center2, Material = material3 };
-            _context.MaterialsPerCenter.Add(mc);
-            _context.SaveChanges();
-
-            //-----------Purchases
-            var item = new Items();
-            for (i = 1; i <= 5; i++)
-            {
-                item = new Items() { Name = "Item " + i, Value = i, Office = office };
-                _context.Items.Add(item);
-            }
-            _context.SaveChanges();
-            var transaction = new Transactions() { Date = DateTime.Now, User = user };
-            _context.Transactions.Add(transaction);
-            double sum = 0;
-            for (i = 1; i <= 5; i++)
-            {
-                item = _context.Items.Find((long)i);
-                var purchase = new Purchases() { Quantity = 1, Item = item, Transaction = transaction };
-                sum += i;
-                _context.Purchases.Add(purchase);
-            }
-            transaction.Amount = sum;
-            _context.SaveChanges();
-
-            //Sales
-            transaction = new Transactions() { Date = DateTime.Now, User = user };
-            _context.Transactions.Add(transaction);
-            var sal = new Sales() { Weight = 1, Transaction = transaction, Center = _context.Centers.Find((long)1), Material = _context.Materials.Find((long)1) };
-            sal.Transaction = transaction;
-            transaction.Amount = 1;
-            _context.Sales.Add(sal);
-            _context.SaveChanges();
-
-            return Ok();
-            */
-
-            //return Ok(_context.Users.Include(x => x.Address).Where(x => x.Id == "9a917906-d9b6-4e40-8376-72d60e068a95"));
             var dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68070, Number = 10, Street = "Azucenas" };
             var user = new Users { Name = "Jose Antonio", Surname = "Hernández Hernández", UserName = "hernandunogames@gmail.com", Email = "hernandunogames@gmail.com", Curp = "HEHA960319HOCRRN02", Address = dir };
             user.Signature = user.Id;
@@ -166,20 +89,6 @@ namespace ReciclarteAPI.Controllers
             _context.Add(item);
             item = new Items() { Name = "Andatti Capuchino Grande", Value = 34, Office = office };
             _context.Add(item);
-
-            /*
-            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68050, Number = 119, Street = "Emilio Carranza" };
-            office = new Offices { Address = dir, Enterprise = oxxo, Point = new Point() { Lat = 17.072188, Long = -96.716563 }, Schedule = new Schedule() { Lu = "07:00–23:00", Ma = "07:00–23:00", Mi = "07:00–23:00", Ju = "07:00–23:00", Vi = "07:00–23:00", Sa = "07:00–23:00", Do = "07:00–23:00" } };
-            _context.Add(office);
-
-            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68050, Number = 316, Street = "Almendros" };
-            office = new Offices { Address = dir, Enterprise = oxxo, Point = new Point() { Lat = 17.072812, Long = -96.713438 }, Schedule = new Schedule() { Lu = "07:00–23:00", Ma = "07:00–23:00", Mi = "07:00–23:00", Ju = "07:00–23:00", Vi = "07:00–23:00", Sa = "07:00–23:00", Do = "07:00–23:00" } };
-            _context.Add(office);
-
-            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 71245, Number = 140, Street = "Cda. de Prol. de Orquideas" };
-            office = new Offices { Address = dir, Enterprise = oxxo, Point = new Point() { Lat = 17.073688, Long = -96.703188 }, Schedule = new Schedule() { Lu = "07:00–23:00", Ma = "07:00–23:00", Mi = "07:00–23:00", Ju = "07:00–23:00", Vi = "07:00–23:00", Sa = "07:00–23:00", Do = "07:00–23:00" } };
-            _context.Add(office);
-            */
 
             //-------CHEDRAUI------
             dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68120, Number = 300, Street = "Periférico" };
@@ -262,8 +171,57 @@ namespace ReciclarteAPI.Controllers
             _context.SaveChanges();
 
             return Ok();
+            */
+
+            var dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68030, Number = 125, Street = "Francisco I. Madero" };
+            var center = new Centers() { UserName = "reciclarte@ito.com", Email = "reciclarte@ito.com", Name = "Instituto Tecnológico de Oaxaca", Schedule = new Schedule() { Lu = "08:00–20:00", Ma = "08:00–20:00", Mi = "08:00–20:00", Ju = "08:00–20:00", Vi = "08:00–20:00", Sa = "08:00–20:00", Do = "Cerrado" }, Address = dir, Point = new Point() { Lat = 17.077313, Long = -96.744437 } };
+            await _userManager.CreateAsync(center, "Aa12345SDFCENT.6!!");
+
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68000, Number = 1, Street = "Macedonio Alcalá" };
+            center = new Centers() { UserName = "reciclarte@santodomingo.com", Email = "reciclarte@santodomingo.com", Name = "Templo de Santo Domingo de Guzmán", Schedule = new Schedule() { Lu = "08:00–14:00", Ma = "08:00–14:00", Mi = "08:00–14:00", Ju = "08:00–14:00", Vi = "08:00–14:00", Sa = "08:00–14:00", Do = "08:00–14:00" }, Address = dir, Point = new Point() { Lat = 17.065688, Long = -96.723188 } };
+            await _userManager.CreateAsync(center, "Aa12345SDFCENT.6!!");
+
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68000, Number = 1, Street = "Portal del Palacio" };
+            center = new Centers() { UserName = "reciclarte@zocalo.com", Email = "reciclarte@zocalo.com", Name = "Zócalo Oaxaca", Schedule = new Schedule() { Lu = "8:00–16:00", Ma = "8:00–16:00", Mi = "8:00–16:00", Ju = "8:00–16:00", Vi = "8:00–16:00", Sa = "8:00–16:00", Do = "8:00–16:00" }, Address = dir, Point = new Point() { Lat = 17.060563, Long = -96.725313 } };
+            await _userManager.CreateAsync(center, "Aa12345SDFCENT.6!!");
+
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68000, Number = 1, Street = "Portal del Palacio" };
+            center = new Centers() { UserName = "reciclarte@zocalo.com", Email = "reciclarte@zocalo.com", Name = "Zócalo Oaxaca", Schedule = new Schedule() { Lu = "8:00–16:00", Ma = "8:00–16:00", Mi = "8:00–16:00", Ju = "8:00–16:00", Vi = "8:00–16:00", Sa = "8:00–16:00", Do = "8:00–16:00" }, Address = dir, Point = new Point() { Lat = 17.060563, Long = -96.725313 } };
+            await _userManager.CreateAsync(center, "Aa12345SDFCENT.6!!");
+
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68000, Number = 1, Street = "Portal del Palacio" };
+            center = new Centers() { UserName = "reciclarte@zocalo.com", Email = "reciclarte@zocalo.com", Name = "Zócalo Oaxaca", Schedule = new Schedule() { Lu = "8:00–16:00", Ma = "8:00–16:00", Mi = "8:00–16:00", Ju = "8:00–16:00", Vi = "8:00–16:00", Sa = "8:00–16:00", Do = "8:00–16:00" }, Address = dir, Point = new Point() { Lat = 17.060563, Long = -96.725313 } };
+            await _userManager.CreateAsync(center, "Aa12345SDFCENT.6!!");
 
 
+            var proveedora = new Enterprises() { UserName = "contacto@proveedora.com", Name = "Proveedora Escolar", Email = "contacto@proveedora.com", Logo = "https://scontent.fpbc2-1.fna.fbcdn.net/v/t1.0-9/13697252_1034012846636070_2010601010670017102_n.png?_nc_cat=105&_nc_ht=scontent.fpbc2-1.fna&oh=e8bab7478d7783dd626b41d1125880b3&oe=5CB0DDB0" };
+            await _userManager.CreateAsync(proveedora, "Aa12345SDFCENT.6!!");
+
+            var asun = new Enterprises() { UserName = "contacto@asuncion.com", Name = "La Asunción", Email = "contacto@asuncion.com", Logo = "http://asuncion.com.mx/img/la-asuncion-ferreteria-y-madereria-logo-1444064293.jpg" };
+            await _userManager.CreateAsync(asun, "Aa12345SDFCENT.6!!");
+
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68000, Number = 1001, Street = "Av. Independencia" };
+            var office = new Offices { UserName = "proveedora1@proveedora.com", Email = "proveedora1@proveedora.com", Address = dir, Enterprise = proveedora, Point = new Point() { Lat = 17.061563, Long = -96.722438 }, Schedule = new Schedule() { Lu = "09:00–20:00", Ma = "09:00–20:00", Mi = "09:00–20:00", Ju = "09:00–20:00", Vi = "09:00–20:00", Sa = "09:00–20:00", Do = "09:00–16:00" } };
+            await _userManager.CreateAsync(office, "Aa12345SDFAURRE.6!!");
+
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68000, Number = 101, Street = "Nicolás del Puerto " };
+            office = new Offices { UserName = "proveedora2@proveedora.com", Email = "proveedora2@proveedora.com", Address = dir, Enterprise = proveedora, Point = new Point() { Lat = 17.060563, Long = -96.715938 }, Schedule = new Schedule() { Lu = "09:00–20:00", Ma = "09:00–20:00", Mi = "09:00–20:00", Ju = "09:00–20:00", Vi = "09:00–20:00", Sa = "09:00–20:00", Do = "Cerrado" } };
+            await _userManager.CreateAsync(office, "Aa12345SDFAURRE.6!!");
+
+            
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 71228, Number = 1814, Street = "Internacional" };
+            office = new Offices { UserName = "asuncion1@asuncion.com", Email = "asuncion1@asuncion.com", Address = dir, Enterprise = asun, Point = new Point() { Lat = 17.069199, Long = -96.700624 }, Schedule = new Schedule() { Lu = "08:00–19:00", Ma = "08:00–19:00", Mi = "08:00–19:00", Ju = "08:00–19:00", Vi = "08:00–19:00", Sa = "08:00–18:00", Do = "Cerrado" } };
+            await _userManager.CreateAsync(office, "Aa12345SDFAURRE.6!!");
+
+            dir = new Addresses() { City = "Oaxaca", Township = "Oaxaca de Juarez", PC = 68090, Number = 1, Street = "Libertad " };
+            office = new Offices { UserName = "asuncion2@asuncion.com", Email = "asuncion2@asuncion.com", Address = dir, Enterprise = proveedora, Point = new Point() { Lat = 17.062688, Long =  -96.738063 }, Schedule = new Schedule() { Lu = "08:00–19:00", Ma = "08:00–19:00", Mi = "08:00–19:00", Ju = "08:00–19:00", Vi = "08:00–19:00", Sa = "08:00–19:00", Do = "Cerrado" } };
+            await _userManager.CreateAsync(office, "Aa12345SDFAURRE.6!!");
+
+
+            var oxxo = _context.Enterprises.FirstOrDefault(x => x.Email == "contacto@oxxo.com");
+            oxxo.Logo = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Oxxo_Logo.svg/1200px-Oxxo_Logo.svg.png";
+            _context.SaveChanges();
+            return Ok();
         }
     }
 }

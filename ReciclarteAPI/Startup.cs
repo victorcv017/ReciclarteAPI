@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using ReciclarteAPI.Middlewares;
 using ReciclarteAPI.Models;
 
 namespace ReciclarteAPI
@@ -76,6 +77,7 @@ namespace ReciclarteAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+           
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -84,6 +86,7 @@ namespace ReciclarteAPI
             {
                 app.UseHsts();
             }
+            app.UseOptionsMiddleware();
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
