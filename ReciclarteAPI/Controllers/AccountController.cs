@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using ReciclarteAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ReciclarteAPI.Controllers
 {
@@ -44,11 +45,35 @@ namespace ReciclarteAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new Users { UserName = model.Email, Email = model.Email, Curp = model.Curp };
+                string aux = "", aux2 = "";
+                aux = (model.Surname.Substring(0, 2) + 
+                    model.Surname.Split(" ")[1].Substring(0,1) + 
+                    model.Name.Split(" ")[0].Substring(0,1)).ToUpper();
+                if(model.Name.Split(" ").Length > 1)
+                {
+                    aux2 = (model.Surname.Substring(0, 2) +
+                    model.Surname.Split(" ")[1].Substring(0, 1) +
+                    model.Name.Split(" ")[1].Substring(0, 1)).ToUpper();
+                }
+                if(model.Curp.Substring(0,4) != aux && model.Curp.Substring(0,4) != aux2)
+                {
+                    return BadRequest("Curp Inválido");
+                }
+                
+                var user = new Users {
+                    UserName = model.Email,
+                    Name = model.Name,
+                    Surname = model.Surname,
+                    Email = model.Email,
+                    Curp = model.Curp };
+                TryValidateModel(user);
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+                
                 var result = await _userManager.CreateAsync(user, model.Password);
+
                 if (result.Succeeded)
                 {
-                    return BuildToken(new LoginInfo() { Email = model.Email , Password = model.Password} , "User");
+                    return Ok("Registro Exitoso. Por favor confirma tu correo.");
                 }
                 else
                 {
@@ -163,7 +188,7 @@ namespace ReciclarteAPI.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiration = DateTime.UtcNow.AddHours(1);
+            var expiration = DateTime.UtcNow.AddDays(3);
 
             JwtSecurityToken token = new JwtSecurityToken(
                issuer: "yourdomain.com",
