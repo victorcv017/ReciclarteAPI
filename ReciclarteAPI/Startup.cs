@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using ReciclarteAPI.Middlewares;
 using ReciclarteAPI.Models;
+using ReciclarteAPI.Services;
 
 namespace ReciclarteAPI
 {
@@ -37,7 +39,9 @@ namespace ReciclarteAPI
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
             // for users 
-            services.AddIdentity<Microsoft.AspNetCore.Identity.IdentityUser, IdentityRole>()
+            services.AddIdentity<IdentityUser, IdentityRole>(config => {
+                    config.SignIn.RequireConfirmedEmail = true;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             //auth jwt service
@@ -66,6 +70,9 @@ namespace ReciclarteAPI
             });
             services.AddMvc().AddJsonOptions(ConfigureJson);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSingleton<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
         private void ConfigureJson(MvcJsonOptions obj)

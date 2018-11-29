@@ -16,6 +16,9 @@ using ReciclarteAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ReciclarteAPI.Services;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace ReciclarteAPI.Controllers
 {
@@ -27,17 +30,20 @@ namespace ReciclarteAPI.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _context;
+        private readonly IEmailSender _emailSender;
 
         public AccountController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ApplicationDbContext context,
+            IEmailSender emailSender,
             IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _context = context;
+            _emailSender = emailSender;
         }
 
         [HttpPost("Signup")]
@@ -73,6 +79,15 @@ namespace ReciclarteAPI.Controllers
 
                 if (result.Succeeded)
                 {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.RouteUrl(
+                        "ConfirmEmail",
+                        values: new { userId = user.Id, code = code },
+                        protocol: Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(model.Email, "Confirmación de Correo",
+                        $"<h3>El equipo de Reciclarte te da la Bienvenida</h3> Por favor confirma tu cuenta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>en el siguiente enlace</a>.");
+
                     return Ok("Registro Exitoso. Por favor confirma tu correo.");
                 }
                 else
@@ -256,6 +271,30 @@ namespace ReciclarteAPI.Controllers
                     Transactions = e.Transactions
                 })
                 );
+        }
+
+
+
+        [HttpGet]
+        [Route("ConfirmEmail", Name = "ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string userId = "", string code = "")
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
+            {
+                ModelState.AddModelError("", "Los datos proveeidos son inválidos");
+                return BadRequest(ModelState);
+            }
+            var user = _context.Users.Find(userId);
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+
+            if (result.Succeeded)
+            {
+                return Ok("Correo Confirmado. Ya puedes iniciar sesión en la Aplicación");
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
 
     }
