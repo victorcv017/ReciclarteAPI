@@ -284,7 +284,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // PUT: api/Enterprises/UpdateOffice
-        [HttpPut("CreateOffice")]
+        [HttpPut("UpdateOffice")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult UpdateMyOffice([FromBody] OfficeAux model)
