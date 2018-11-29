@@ -283,8 +283,8 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        // PUT: api/Enterprises/MyOffice
-        [HttpPut("MyOffice")]
+        // PUT: api/Enterprises/UpdateOffice
+        [HttpPut("CreateOffice")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult UpdateMyOffice([FromBody] OfficeAux model)
@@ -308,7 +308,7 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("MyOffice")]
+        [HttpDelete("DeleteOffice")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult DeleteOffice([FromBody] Offices model)
