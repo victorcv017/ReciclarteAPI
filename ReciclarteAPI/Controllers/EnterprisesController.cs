@@ -219,6 +219,10 @@ namespace ReciclarteAPI.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(model.Password is null)
+                {
+                    return BadRequest();
+                }
                 var list = _context.Enterprises.Where(e => e.Email == User.Identity.Name).ToList();
                 if(list.Count != 1)
                 {
@@ -287,7 +291,7 @@ namespace ReciclarteAPI.Controllers
         {
             var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return BadRequest();
-            var office = enterprise.Offices.FirstOrDefault(x => x.Email == model.Email);
+            var office = enterprise.Offices.FirstOrDefault(x => x.Id == model.Id);
             if (office is null) return BadRequest();
             if (!(model.Schedule is null)) office.Schedule = model.Schedule;
             if (!(model.Point is null)) office.Point = model.Point;
@@ -311,7 +315,7 @@ namespace ReciclarteAPI.Controllers
         {
             var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return BadRequest();
-            var office = enterprise.Offices.FirstOrDefault(o => o.Email == model.Email);
+            var office = enterprise.Offices.FirstOrDefault(o => o.Id == model.Id);
             if (office is null) return BadRequest();
             _context.Offices.Remove(office);
             _context.SaveChanges();
@@ -327,12 +331,19 @@ namespace ReciclarteAPI.Controllers
             {
                 var myEnterprise = GetMyEnterprise();
                 var office = _context.Offices.Find(model.OfficesId);
-                if(office.EnterpriseId != myEnterprise.FirstOrDefault().Id)
+                if (office == null)
+                {
+                    return NotFound();
+                }
+                if (office.EnterpriseId != myEnterprise.FirstOrDefault().Id)
                 {
                     return BadRequest(ModelState);
                 }
-                ItemsController _itemsController = new ItemsController(_context);
-                return await _itemsController.PostItems(model);
+                model.Office = office;
+                _context.Items.Add(model);
+                await _context.SaveChangesAsync();
+
+                return Ok(CreatedAtAction("GetItems", new { id = model.Id }, model));
             }
             else
             {
