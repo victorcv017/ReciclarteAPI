@@ -268,6 +268,27 @@ namespace ReciclarteAPI.Controllers
                 }));
         }
 
+        [HttpPut("User/Profile")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyUser")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UsersProfileInfo profile)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.Email == User.Identity.Name);
+            if (user is null)
+            {
+                return NotFound();
+            }
+            var result = await _userManager.ChangePasswordAsync(user, profile.CurrentPassword, profile.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest("La contraseña no cumple los requerimientos");
+            }
+
+            user.Address = profile.Address;
+            return Ok("Cambios Exitosos");
+        }
+
         [HttpGet("User/Transactions")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyUser")]
@@ -278,21 +299,40 @@ namespace ReciclarteAPI.Controllers
             {
                 return NotFound();
             }
+
             return Ok(new UsersTransactionsInfo {
                 Sales = _context.Sales
+                .Include(x => x.Material)
+                .Include(x => x.Center)
                 .Include(x => x.Transaction)
                 .Where(x => x.Transaction.UserId == user.Id)
-                .ToList(),
+                .ToList()
+                .Select(e => new UserSalesInfo
+                {
+                    Id = e.Id,
+                    Center = e.Center.Name,
+                    Weight = e.Weight,
+                    Material = e.Material.Material,
+                    Coins = e.Weight * e.Material.Price,
+                    Date = e.Transaction.Date
+                    
+                }),
                 Purchases = _context.Purchases
+                .Include(x => x.Item)
                 .Include(x => x.Transaction)
+                .Include(x => x.Item.Office.Enterprise)
                 .Where(x => x.Transaction.UserId == user.Id)
                 .ToList()
+                .Select(e => new UserPurchasesInfo
+                {
+                    Id = e.Id,
+                    Enterprise = e.Item.Office.Enterprise.Logo,
+                    Quantity = e.Quantity,
+                    Item = e.Item.Name,
+                    Coins = e.Quantity * e.Item.Value,
+                    Date = e.Transaction.Date
+                })
             });
-            return Ok(_context.Purchases
-                .Include(x => x.Transaction)
-                .Where(x => x.Transaction.UserId == user.Id)
-                .ToList()
-                );
         }
 
 
