@@ -19,6 +19,8 @@ using System.Text.RegularExpressions;
 using ReciclarteAPI.Services;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Globalization;
+using ReciclarteAPI.Models.Info;
 
 namespace ReciclarteAPI.Controllers
 {
@@ -65,34 +67,50 @@ namespace ReciclarteAPI.Controllers
                 {
                     return BadRequest("Curp Inválido");
                 }
-                
+
+                DateTime date = DateTime.ParseExact(
+                    model.Curp.Substring(4, 6),
+                    "yyMMdd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None);
+                char gender = model.Curp.ElementAt(10);
+
                 var user = new Users {
                     UserName = model.Email,
                     Name = model.Name,
                     Surname = model.Surname,
                     Email = model.Email,
-                    Curp = model.Curp };
+                    Curp = model.Curp,
+                    BirthDate = date,
+                    Gender = gender
+                };
                 TryValidateModel(user);
                 if (!ModelState.IsValid) return BadRequest(ModelState);
-                
-                var result = await _userManager.CreateAsync(user, model.Password);
+                try {
+                    var result = await _userManager.CreateAsync(user, model.Password);
 
-                if (result.Succeeded)
-                {
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.RouteUrl(
-                        "ConfirmEmail",
-                        values: new { userId = user.Id, code = code },
-                        protocol: Request.Scheme);
+                    if (result.Succeeded)
+                    {
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.RouteUrl(
+                            "ConfirmEmail",
+                            values: new { userId = user.Id, code = code },
+                            protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(model.Email, "Confirmación de Correo",
-                        $"<h3>El equipo de Reciclarte te da la Bienvenida</h3> Por favor confirma tu cuenta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>en el siguiente enlace</a>.");
+                        await _emailSender.SendEmailAsync(model.Email, "Confirmación de Correo",
+                            $"<h3>El equipo de Reciclarte te da la Bienvenida</h3> Por favor confirma tu cuenta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>en el siguiente enlace</a>.");
 
-                    return Ok("Registro Exitoso. Por favor confirma tu correo.");
+                        return Ok("Registro Exitoso. Por favor confirma tu correo.");
+                    }
+                    else
+                    {
+                        return BadRequest("Usuario o Contraseña Invalidos");
+                    }
+
                 }
-                else
+                catch(Exception e)
                 {
-                    return BadRequest("Usuario o Contraseña Invalidos");
+                    return BadRequest("Curp Inválida");
                 }
             }
             else
@@ -260,16 +278,20 @@ namespace ReciclarteAPI.Controllers
             {
                 return NotFound();
             }
-
-            return Ok(_context.Users
-                .Include(x => x.Transactions).ThenInclude(t => t.Sales).ThenInclude(s => s.Center)
-                .Include(x => x.Transactions).ThenInclude(t => t.Purchases).ThenInclude(p => p.Item.Office.Enterprise)
-                .Where(x => x.Id == user.Id)
+            return Ok(new UsersTransactionsInfo {
+                Sales = _context.Sales
+                .Include(x => x.Transaction)
+                .Where(x => x.Transaction.UserId == user.Id)
+                .ToList(),
+                Purchases = _context.Purchases
+                .Include(x => x.Transaction)
+                .Where(x => x.Transaction.UserId == user.Id)
                 .ToList()
-                .Select(e => new UsersInfo
-                {
-                    Transactions = e.Transactions
-                })
+            });
+            return Ok(_context.Purchases
+                .Include(x => x.Transaction)
+                .Where(x => x.Transaction.UserId == user.Id)
+                .ToList()
                 );
         }
 
