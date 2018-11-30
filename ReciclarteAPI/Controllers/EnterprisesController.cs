@@ -169,8 +169,8 @@ namespace ReciclarteAPI.Controllers
             return _context.Enterprises.Any(e => e.Id == id);
         }
 
-        // GET: api/Enterprises/offices/items
-        [HttpGet("offices/items")]
+        // GET: api/Enterprises/Offices/Items
+        [HttpGet("Offices/Items")]
         public ActionResult GetEnterprisesWithOfficesAndItems()
         {
             //return Ok(_context.Offices.Include(o => o.Items));
@@ -195,8 +195,8 @@ namespace ReciclarteAPI.Controllers
                 }));
         }
 
-        // GET: api/Enterprises/myEnterprise
-        [HttpGet("myEnterprise")]
+        // GET: api/Enterprises/MyEnterprise
+        [HttpGet("MyEnterprise")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public IEnumerable<EnterprisesInfo> GetMyEnterprise()
@@ -212,7 +212,8 @@ namespace ReciclarteAPI.Controllers
                 });
         }
 
-        [HttpPost("CreateOffice")]
+        // POST: api/Enterprises/MyEnterprise/Office
+        [HttpPost("MyEnterprise/Office")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public async Task<IActionResult> CreateOffice([FromBody] OfficeAux model)
@@ -235,12 +236,12 @@ namespace ReciclarteAPI.Controllers
                     return NotFound();
                 }
 
-                var office = new Offices { UserName = model.Email, Email = model.Email, Address = model.Address,
+                var office = new Offices { UserName = model.UserName, Email = model.Email, Address = model.Address,
                                            Enterprise = enterprises, Point = model.Point, Schedule = model.Schedule };
                 var result = await _userManager.CreateAsync(office, model.Password);
                 if (result.Succeeded)
                 {
-                    return BuildToken(new LoginInfo() { Email = model.Email, Password = model.Password }, "Office");
+                    return Ok();
                 }
                 else
                 {
@@ -254,40 +255,11 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        private IActionResult BuildToken(LoginInfo loginInfo, string type)
-        {
-            var claims = new[]
-            {
-                    new Claim(JwtRegisteredClaimNames.UniqueName, loginInfo.Email),
-                    new Claim("Type", type),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Llave"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var expiration = DateTime.UtcNow.AddHours(1);
-
-            JwtSecurityToken token = new JwtSecurityToken(
-               issuer: "yourdomain.com",
-               audience: "yourdomain.com",
-               claims: claims,
-               expires: expiration,
-               signingCredentials: creds);
-
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = expiration
-            });
-
-        }
-
-        // PUT: api/Enterprises/UpdateOffice
-        [HttpPut("UpdateOffice")]
+        // PUT: api/Enterprises/MyEnterprise/Office
+        [HttpPut("MyEnterprise/Office")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
-        public ActionResult UpdateMyOffice([FromBody] OfficeAux model)
+        public ActionResult UpdateOffice([FromBody] OfficeAux model)
         {
             var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return BadRequest();
@@ -308,7 +280,8 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("DeleteOffice")]
+        // DELETE: api/Enterprises/MyEnterprise/Office
+        [HttpDelete("MyEnterprise/Office")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult DeleteOffice([FromBody] Offices model)
@@ -322,7 +295,8 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("CreateItem")]
+        // POST: api/Enterprises/MyEnterprise/Item
+        [HttpPost("MyEnterprise/Item")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public async Task<IActionResult> CreateItem([FromBody] Items model)
@@ -352,7 +326,8 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        [HttpPut("UpdateItem")]
+        // PUT: api/Enterprises/MyEnterprise/Item
+        [HttpPut("MyEnterprise/Item")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult UpdateItem([FromBody] Items model)
@@ -371,7 +346,8 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("DeleteItem")]
+        // DELETE: api/Enterprises/MyEnterprise/Item
+        [HttpDelete("MyEnterprise/Item")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult DeleteItem([FromBody] Items model)
