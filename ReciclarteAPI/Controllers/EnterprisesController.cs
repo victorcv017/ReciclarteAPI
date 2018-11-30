@@ -364,6 +364,20 @@ namespace ReciclarteAPI.Controllers
             _context.SaveChanges();
             return Ok();
         }
+
+        // GET: api/Enterprises/MyEnterprise/Transactions
+        [HttpGet("MyEnterprise/Transactions")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public ActionResult Transactions()
+        {
+            var enterprise = _context.Enterprises.FirstOrDefault(x => x.Email == User.Identity.Name);
+            if (enterprise is null) return BadRequest();
+            return Ok(_context.Purchases
+                .Include(x => x.Item)
+                .ThenInclude(x => x.Office)
+                .Where(x => x.Item.Office.EnterpriseId == enterprise.Id));
+        }
     }
     
     public class OfficeAux : Offices
