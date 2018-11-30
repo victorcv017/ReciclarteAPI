@@ -8,7 +8,7 @@ namespace ReciclarteAPI.Models
 	public class Enterprises : IdentityUser
 	{
         public string Name { get; set; }
-        [Url]
+        [Url(ErrorMessage = "Url inválida")]
         public string Logo { get; set; }
         [DefaultValue(0)]
         public double Balance { get; set; }

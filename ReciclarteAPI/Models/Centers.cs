@@ -14,7 +14,7 @@ namespace ReciclarteAPI.Models
         public string Name { get; set; }
         public Schedule Schedule { get; set; }
         public Point Point { get; set; }
-        [Url]
+        [Url(ErrorMessage = "Url inválida")]
         public string Logo { get; set; }
         public Addresses Address { get; set; }
         [JsonProperty(PropertyName = "materials")]
