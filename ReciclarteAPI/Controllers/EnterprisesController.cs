@@ -212,6 +212,17 @@ namespace ReciclarteAPI.Controllers
                 });
         }
 
+        // GET: api/Enterprises/MyEnterprise/Office
+        [HttpGet("MyEnterprise/Office")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public IEnumerable<Offices> GetOffices()
+        {
+            var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
+            if (enterprise is null) return null;
+            return enterprise.Offices.ToList();
+        }
+
         // POST: api/Enterprises/MyEnterprise/Office
         [HttpPost("MyEnterprise/Office")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -363,6 +374,17 @@ namespace ReciclarteAPI.Controllers
             _context.Items.Remove(item);
             _context.SaveChanges();
             return Ok();
+        }
+
+        // GET: api/Enterprises/MyEnterprise/Item
+        [HttpGet("MyEnterprise/Item")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public IEnumerable<Offices> GetItems()
+        {
+            var enterprise = _context.Enterprises.Include(e => e.Offices).ThenInclude(o => o.Items).FirstOrDefault(e => e.Email == User.Identity.Name);
+            if (enterprise is null) return null;
+            return enterprise.Offices.ToList();
         }
 
         // GET: api/Enterprises/MyEnterprise/Transactions
