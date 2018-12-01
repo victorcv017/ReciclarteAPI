@@ -224,7 +224,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // GET: api/Enterprises/MyEnterprise/Office/Item
-        [HttpGet("MyEnterprise/Office/Items")]
+        [HttpGet("MyEnterprise/Offices/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public IEnumerable<Offices> GetOfficesWithItems()
