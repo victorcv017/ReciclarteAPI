@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReciclarteAPI.Models;
+using ReciclarteAPI.Models.Info;
 
 namespace ReciclarteAPI.Controllers
 {
@@ -136,6 +140,86 @@ namespace ReciclarteAPI.Controllers
         private bool OfficesExists(string id)
         {
             return _context.Offices.Any(e => e.Id == id);
+        }
+
+        [HttpPost("MyOffice/sale")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyOffice")]
+        public ActionResult Sale([FromBody] BuyInfo model)
+        {
+
+            var user = _context.Users.Find(model.UserId);
+            if (user is null) return BadRequest();
+            var transaction = new Transactions() { Date = DateTime.Now, User = user };
+            var office = _context.Offices.Include(x => x.Enterprise).FirstOrDefault(x => x.Email == User.Identity.Name);
+            if (office is null) return BadRequest();
+            double amount = 0;
+            foreach (var pair in model.Items)
+            {
+                try
+                {
+
+                    var purchase = new Purchases()
+                    {
+                        Item = _context.Items.Find(pair.Key),
+                        Transaction = transaction,
+                        Quantity = pair.Value
+                    };
+                    amount += pair.Value;
+                    _context.Purchases.Add(purchase);
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e);
+                }
+            }
+            transaction.Amount = amount;
+            if (user.Balance - amount < 0)
+            {
+                return BadRequest("Saldo Insuficiente");
+            }
+
+            office.Enterprise.Balance = office.Enterprise.Balance + amount;
+            user.Balance = user.Balance - amount;
+            _context.Transactions.Add(transaction);
+            _context.SaveChanges();
+            return Ok();
+
+        }
+
+        [HttpGet("MyOffice/items")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyOffice")]
+        public ActionResult GetMyItems()
+        {
+
+            var office = _context.Offices.Include(x => x.Items).FirstOrDefault(x => x.Email == User.Identity.Name);
+            if (office is null) return BadRequest();
+            return Ok(office.Items);
+
+        }
+
+        [HttpGet("MyOffice/Transactions")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyOffice")]
+        public ActionResult Transactions()
+        {
+
+            var office = _context.Offices.Include(x => x.Items).FirstOrDefault(x => x.Email == User.Identity.Name);
+            if (office is null) return BadRequest();
+            return Ok(_context.Purchases
+                .Include(x => x.Transaction)
+                    .ThenInclude(x => x.User)
+                .Include(x => x.Item)
+                    .ThenInclude(x => x.Office)
+                    .Where(x => x.Item.OfficesId == office.Id)
+                .Select(e => new OfficesTransactionsInfo
+                {
+
+                })
+
+           );
+
         }
     }
 }

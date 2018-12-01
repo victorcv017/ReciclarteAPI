@@ -192,7 +192,7 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("MyCenter/Material")]
+        [HttpPost("MyCenter/Materials")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyCenter")]
         public ActionResult AddMaterial([FromBody] long []arg)
@@ -213,7 +213,7 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("MyCenter/Material")]
+        [HttpDelete("MyCenter/Materials")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyCenter")]
         public ActionResult DeleteMaterial([FromBody] long[] arg)

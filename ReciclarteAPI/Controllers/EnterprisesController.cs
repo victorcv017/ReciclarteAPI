@@ -213,7 +213,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // GET: api/Enterprises/MyEnterprise/Office
-        [HttpGet("MyEnterprise/Office")]
+        [HttpGet("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public IEnumerable<Offices> GetOffices()
@@ -224,7 +224,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // GET: api/Enterprises/MyEnterprise/Office/Item
-        [HttpGet("MyEnterprise/Office/Item")]
+        [HttpGet("MyEnterprise/Office/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public IEnumerable<Offices> GetOfficesWithItems()
@@ -235,7 +235,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // POST: api/Enterprises/MyEnterprise/Office
-        [HttpPost("MyEnterprise/Office")]
+        [HttpPost("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public async Task<IActionResult> CreateOffice([FromBody] OfficeAux model)
@@ -278,7 +278,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // PUT: api/Enterprises/MyEnterprise/Office
-        [HttpPut("MyEnterprise/Office")]
+        [HttpPut("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult UpdateOffice([FromBody] OfficeAux model)
@@ -303,7 +303,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // DELETE: api/Enterprises/MyEnterprise/Office
-        [HttpDelete("MyEnterprise/Office")]
+        [HttpDelete("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult DeleteOffice([FromBody] Offices model)
@@ -318,7 +318,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // POST: api/Enterprises/MyEnterprise/Item
-        [HttpPost("MyEnterprise/Item")]
+        [HttpPost("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public async Task<IActionResult> CreateItem([FromBody] Items model)
@@ -349,7 +349,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // PUT: api/Enterprises/MyEnterprise/Item
-        [HttpPut("MyEnterprise/Item")]
+        [HttpPut("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult UpdateItem([FromBody] Items model)
@@ -369,7 +369,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // DELETE: api/Enterprises/MyEnterprise/Item
-        [HttpDelete("MyEnterprise/Item")]
+        [HttpDelete("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult DeleteItem([FromBody] Items model)
@@ -388,7 +388,7 @@ namespace ReciclarteAPI.Controllers
         }
 
         // GET: api/Enterprises/MyEnterprise/Item
-        [HttpGet("MyEnterprise/Item")]
+        [HttpGet("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
         public IEnumerable<Items> GetItems()
