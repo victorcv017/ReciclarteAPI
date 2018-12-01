@@ -123,7 +123,7 @@ namespace ReciclarteAPI.Controllers
         [HttpPost("User/Login")]
         public async Task<IActionResult> UserLogin([FromBody] LoginInfo loginInfo)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && _context.Users.FirstOrDefault(x => x.Email == loginInfo.Email) != null)
             {
                 var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
@@ -145,7 +145,7 @@ namespace ReciclarteAPI.Controllers
         [HttpPost("Enterprise/Login")]
         public async Task<IActionResult> EnterpriseLogin([FromBody] LoginInfo loginInfo)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && _context.Enterprises.FirstOrDefault(x => x.Email == loginInfo.Email) != null)
             {
                 var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
@@ -167,7 +167,7 @@ namespace ReciclarteAPI.Controllers
         [HttpPost("Center/Login")]
         public async Task<IActionResult> CenterLogin([FromBody] LoginInfo loginInfo)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && _context.Centers.FirstOrDefault(x => x.Email == loginInfo.Email) != null)
             {
                 var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
@@ -189,7 +189,7 @@ namespace ReciclarteAPI.Controllers
         [HttpPost("Office/Login")]
         public async Task<IActionResult> OfficeLogin([FromBody] LoginInfo loginInfo)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && _context.Offices.FirstOrDefault(x => x.Email == loginInfo.Email) != null)
             {
                 var result = await _signInManager.PasswordSignInAsync(loginInfo.Email, loginInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
