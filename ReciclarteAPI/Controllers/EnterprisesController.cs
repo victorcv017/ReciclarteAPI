@@ -212,29 +212,48 @@ namespace ReciclarteAPI.Controllers
                 });
         }
 
-        // GET: api/Enterprises/MyEnterprise/Office
+        // GET: api/Enterprises/MyEnterprise/Offices
         [HttpGet("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
-        public IEnumerable<Offices> GetOffices()
+        public ActionResult GetOffices()
         {
             var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return null;
-            return enterprise.Offices.ToList();
+            var offices = enterprise.Offices.ToList().Select(o => new OfficesInfo
+            {
+                Id = o.Id,
+                Schedule = o.Schedule,
+                Point = o.Point,
+                Address = o.Address
+            });
+            return Ok(offices);
         }
 
-        // GET: api/Enterprises/MyEnterprise/Office/Item
+        // GET: api/Enterprises/MyEnterprise/Offices/Items
         [HttpGet("MyEnterprise/Offices/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
-        public IEnumerable<Offices> GetOfficesWithItems()
+        public ActionResult GetOfficesWithItems()
         {
             var enterprise = _context.Enterprises.Include(e => e.Offices).ThenInclude(o => o.Items).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return null;
-            return enterprise.Offices.ToList();
+            var offices = enterprise.Offices.ToList().Select(o => new OfficesInfo
+            {
+                Id = o.Id,
+                Schedule = o.Schedule,
+                Point = o.Point,
+                Address = o.Address,
+                Items = o.Items
+            });
+            if (offices == null)
+            {
+                return NotFound();
+            }
+            return Ok(offices);
         }
 
-        // POST: api/Enterprises/MyEnterprise/Office
+        // POST: api/Enterprises/MyEnterprise/Offices
         [HttpPost("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
@@ -277,7 +296,7 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        // PUT: api/Enterprises/MyEnterprise/Office
+        // PUT: api/Enterprises/MyEnterprise/Offices
         [HttpPut("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
@@ -302,7 +321,7 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        // DELETE: api/Enterprises/MyEnterprise/Office
+        // DELETE: api/Enterprises/MyEnterprise/Offices
         [HttpDelete("MyEnterprise/Offices")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
@@ -317,7 +336,7 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        // POST: api/Enterprises/MyEnterprise/Item
+        // POST: api/Enterprises/MyEnterprise/Items
         [HttpPost("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
@@ -348,7 +367,7 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        // PUT: api/Enterprises/MyEnterprise/Item
+        // PUT: api/Enterprises/MyEnterprise/Items
         [HttpPut("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
@@ -368,7 +387,7 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        // DELETE: api/Enterprises/MyEnterprise/Item
+        // DELETE: api/Enterprises/MyEnterprise/Items
         [HttpDelete("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
@@ -387,18 +406,18 @@ namespace ReciclarteAPI.Controllers
             return Ok();
         }
 
-        // GET: api/Enterprises/MyEnterprise/Item
+        // GET: api/Enterprises/MyEnterprise/Items
         [HttpGet("MyEnterprise/Items")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
-        public IEnumerable<Items> GetItems()
+        public ActionResult GetItems()
         {
             var enterprise = _context.Enterprises.Include(e => e.Offices).ThenInclude(o => o.Items).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return null;
             List<Items> items = new List<Items>();
-            foreach(var office in enterprise.Offices)
+            foreach (var office in enterprise.Offices)
                 items.AddRange(office.Items.ToList());
-            return items;
+            return Ok(items);
         }
 
         // GET: api/Enterprises/MyEnterprise/Transactions
