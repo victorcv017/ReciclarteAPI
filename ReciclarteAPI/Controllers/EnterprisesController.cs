@@ -223,6 +223,17 @@ namespace ReciclarteAPI.Controllers
             return enterprise.Offices.ToList();
         }
 
+        // GET: api/Enterprises/MyEnterprise/Office/Item
+        [HttpGet("MyEnterprise/Office/Item")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = "PolicyEnterprise")]
+        public IEnumerable<Offices> GetOfficesWithItems()
+        {
+            var enterprise = _context.Enterprises.Include(e => e.Offices).ThenInclude(o => o.Items).FirstOrDefault(e => e.Email == User.Identity.Name);
+            if (enterprise is null) return null;
+            return enterprise.Offices.ToList();
+        }
+
         // POST: api/Enterprises/MyEnterprise/Office
         [HttpPost("MyEnterprise/Office")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -380,11 +391,14 @@ namespace ReciclarteAPI.Controllers
         [HttpGet("MyEnterprise/Item")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyEnterprise")]
-        public IEnumerable<Offices> GetItems()
+        public IEnumerable<Items> GetItems()
         {
             var enterprise = _context.Enterprises.Include(e => e.Offices).ThenInclude(o => o.Items).FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return null;
-            return enterprise.Offices.ToList();
+            List<Items> items = new List<Items>();
+            foreach(var office in enterprise.Offices)
+                items.AddRange(office.Items.ToList());
+            return items;
         }
 
         // GET: api/Enterprises/MyEnterprise/Transactions
