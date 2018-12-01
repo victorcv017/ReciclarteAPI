@@ -68,11 +68,16 @@ namespace ReciclarteAPI
                 options.AddPolicy("PolicyCenter", pol => pol.RequireClaim("Type", "Center"));
                 options.AddPolicy("PolicyOffice", pol => pol.RequireClaim("Type", "Office"));
             });
+
+            //services.AddCors();
             services.AddMvc().AddJsonOptions(ConfigureJson);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
+
+
+
         }
 
         private void ConfigureJson(MvcJsonOptions obj)
@@ -93,10 +98,17 @@ namespace ReciclarteAPI
             {
                 app.UseHsts();
             }
-            app.UseOptionsMiddleware();
+
             app.UseAuthentication();
             app.UseHttpsRedirection();
+
+            //app.UseCors(
+            //    options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials()
+            //);
+            
+           
             app.UseMvc();
+            app.UseMiddleware(typeof(OptionsMiddleware));
         }
     }
 }
