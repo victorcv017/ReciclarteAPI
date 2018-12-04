@@ -227,7 +227,14 @@ namespace ReciclarteAPI.Controllers
                 _context.MaterialsPerCenter.Remove(mat);
 
             }
-            _context.SaveChanges();
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return BadRequest("Material no eliminado");
+            }
 
             return Ok();
         }

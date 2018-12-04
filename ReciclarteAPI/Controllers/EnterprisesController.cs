@@ -332,7 +332,14 @@ namespace ReciclarteAPI.Controllers
             var office = enterprise.Offices.FirstOrDefault(o => o.Id == model.Id);
             if (office is null) return BadRequest();
             _context.Offices.Remove(office);
-            _context.SaveChanges();
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return BadRequest("Office no eliminada");
+            }
             return Ok();
         }
 
@@ -402,7 +409,14 @@ namespace ReciclarteAPI.Controllers
             var item = office.Items.Find(i => i.Id == model.Id);
             if (item is null) return BadRequest();
             _context.Items.Remove(item);
-            _context.SaveChanges();
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return BadRequest("Item no eliminado");
+            }
             return Ok();
         }
 
