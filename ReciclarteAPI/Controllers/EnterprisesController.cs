@@ -83,6 +83,7 @@ namespace ReciclarteAPI.Controllers
         {
             return Ok(_context.Enterprises
                 .Include(x => x.Offices)
+                .ThenInclude(x => x.Address)
                 .ToList()
                 .Select(e => new EnterprisesInfo
                 {
@@ -277,7 +278,7 @@ namespace ReciclarteAPI.Controllers
                     return NotFound();
                 }
 
-                var office = new Offices { UserName = model.UserName, Email = model.Email, Address = model.Address,
+                var office = new Offices { UserName = model.Email, Email = model.Email, Address = model.Address,
                                            Enterprise = enterprises, Point = model.Point, Schedule = model.Schedule };
                 var result = await _userManager.CreateAsync(office, model.Password);
                 if (result.Succeeded)
@@ -445,7 +446,15 @@ namespace ReciclarteAPI.Controllers
             return Ok(_context.Purchases
                 .Include(x => x.Item)
                 .ThenInclude(x => x.Office)
-                .Where(x => x.Item.Office.EnterpriseId == enterprise.Id));
+                .Where(x => x.Item.Office.EnterpriseId == enterprise.Id)
+                .Select(e => new EnterprisesTransactionsInfo
+                {
+                    Id = e.Id,
+                    Quantity = e.Quantity,
+                    TransactionId = e.TransactionId,
+                    Date = e.Transaction.Date,
+                    Item = e.Item
+                }));
         }
     }
     

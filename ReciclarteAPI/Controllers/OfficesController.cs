@@ -147,25 +147,24 @@ namespace ReciclarteAPI.Controllers
         [Authorize(Policy = "PolicyOffice")]
         public ActionResult Sale([FromBody] BuyInfo model)
         {
-
             var user = _context.Users.Find(model.UserId);
-            if (user is null) return BadRequest();
+            if (user is null) return BadRequest("Usuario inválido");
             var transaction = new Transactions() { Date = DateTime.Now, User = user };
             var office = _context.Offices.Include(x => x.Enterprise).FirstOrDefault(x => x.Email == User.Identity.Name);
-            if (office is null) return BadRequest();
+            if (office is null) return BadRequest("Error del sistema");
             double amount = 0;
             foreach (var pair in model.Items)
             {
                 try
                 {
-
+                    var item = _context.Items.Find(pair.Key);
                     var purchase = new Purchases()
                     {
-                        Item = _context.Items.Find(pair.Key),
+                        Item = item,
                         Transaction = transaction,
                         Quantity = pair.Value
                     };
-                    amount += pair.Value;
+                    amount += pair.Value * item.Value;
                     _context.Purchases.Add(purchase);
                 }
                 catch (Exception e)
@@ -187,15 +186,28 @@ namespace ReciclarteAPI.Controllers
 
         }
 
-        [HttpGet("MyOffice/items")]
+        [HttpGet("MyOffice")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize(Policy = "PolicyOffice")]
         public ActionResult GetMyItems()
         {
 
-            var office = _context.Offices.Include(x => x.Items).FirstOrDefault(x => x.Email == User.Identity.Name);
+            var office = _context.Offices
+                .Include(x => x.Items)
+                .Where(x => x.Email == User.Identity.Name);
             if (office is null) return BadRequest();
-            return Ok(office.Items);
+            return Ok(office.Select(
+                 e => new OfficesInfo
+                 {
+                     Id = e.Id,
+                     EnterpriseId = e.EnterpriseId,
+                     Address = e.Address,
+                     Point = e.Point,
+                     Schedule = e.Schedule,
+                     Items = e.Items
+
+                 }
+                ));
 
         }
 
@@ -215,7 +227,12 @@ namespace ReciclarteAPI.Controllers
                     .Where(x => x.Item.OfficesId == office.Id)
                 .Select(e => new OfficesTransactionsInfo
                 {
-
+                    Id = e.Id,
+                    Quantity = e.Quantity,
+                    Total = e.Quantity * e.Item.Value,
+                    Date = e.Transaction.Date,
+                    Item = e.Item,
+                    User = e.Transaction.User.Name
                 })
 
            );

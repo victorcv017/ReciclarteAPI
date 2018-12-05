@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace ReciclarteAPI.Models.Info
 {
-    public class OfficesTransactionsInfo
+    public class EnterprisesTransactionsInfo
     {
         public long Id { get; set; }
         public double Quantity { get; set; }
-        public double Total { get; set; }
+        public long TransactionId { get; set; }
         public DateTime Date { get; set; }
         public Items Item { get; set; }
-        public string User { get; set; }
     }
 }

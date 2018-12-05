@@ -85,6 +85,7 @@ namespace ReciclarteAPI.Controllers
                 Name = center.Name,
                 Schedule = center.Schedule,
                 Point = center.Point,
+                Logo = center.Logo,
                 Address = center.Address
 
             });
@@ -130,14 +131,15 @@ namespace ReciclarteAPI.Controllers
             {
                 try
                 {
+                    var material = _context.Materials.Find(pair.Key);
                     var sales = new Sales()
                     {
                         Center = center,
-                        Material = _context.Materials.Find(pair.Key),
+                        Material = material,
                         Transaction = transaction,
                         Weight = pair.Value
                     };
-                    amount += pair.Value;
+                    amount += pair.Value * material.Price;
                     _context.Sales.Add(sales);
                 }
                 catch (Exception e)

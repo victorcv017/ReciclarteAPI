@@ -359,5 +359,14 @@ namespace ReciclarteAPI.Controllers
             }
         }
 
+        [HttpGet("GetId/{email}")]
+        public ActionResult GetId(string email = "")
+        {
+            
+            var user = _context.Users.FirstOrDefault(x => x.Email == email);
+            return Ok(user.Id);
+
+        }
+
     }
 }
