@@ -219,7 +219,10 @@ namespace ReciclarteAPI.Controllers
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult GetOffices()
         {
-            var enterprise = _context.Enterprises.Include(e => e.Offices).FirstOrDefault(e => e.Email == User.Identity.Name);
+            var enterprise = _context.Enterprises
+                .Include(e => e.Offices)
+                    .ThenInclude(e => e.Address)
+                .FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return null;
             var offices = enterprise.Offices.ToList().Select(o => new OfficesInfo
             {
@@ -237,7 +240,12 @@ namespace ReciclarteAPI.Controllers
         [Authorize(Policy = "PolicyEnterprise")]
         public ActionResult GetOfficesWithItems()
         {
-            var enterprise = _context.Enterprises.Include(e => e.Offices).ThenInclude(o => o.Items).FirstOrDefault(e => e.Email == User.Identity.Name);
+            var enterprise = _context.Enterprises
+                .Include(e => e.Offices)
+                    .ThenInclude(e => e.Address)
+                .Include(e => e.Offices)
+                    .ThenInclude(o => o.Items)
+                .FirstOrDefault(e => e.Email == User.Identity.Name);
             if (enterprise is null) return null;
             var offices = enterprise.Offices.ToList().Select(o => new OfficesInfo
             {
